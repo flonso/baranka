@@ -36,4 +36,8 @@ Run development server:
 
 - Controllers are stored in [app/Http/Controllers](./app/Http/Controllers)
 - Route definitions are stored in [routes](./routes)
-- Model definitions (using Eloquent) are stored in []
+- Model definitions (using Eloquent) are stored in [app/Models](./app/Models)
+
+## Coding standards
+
+The Laravel coding good practices can be found at the following url [https://www.laravelbestpractices.com/](https://www.laravelbestpractices.com/).
