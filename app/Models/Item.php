@@ -9,51 +9,22 @@ class Item extends Model
     public $incrementing = true;
     public $timestamps = true;
 
-    /**
-     * The item's name.
-     *
-     * @var string
-     */
-    public $name;
+    protected $attributes = [
+        'multiplier_increment' => 0,
+        'discovered' => false
+    ];
 
     /**
-     * The item's certificate number.
-     *
-     * @var string
+     * The player that discovered the item.
      */
-    public $certificate_number;
+    public function discoveredBy() {
+        return $this->belongsTo('App\Models\Player', 'discovered_by_id');
+    }
 
     /**
-     * The amount of points gained by discovering this item.
-     *
-     * @var int
+     * The events that this item has induced.
      */
-    public $discovery_points;
-
-    /**
-     * The amount of points gained by accomplishing the adventure
-     * related to this object.
-     *
-     * @var int
-     */
-    public $adventure_points;
-
-    /**
-     * The amount by which a team's score multiplier can be increased
-     * after discovering this item.
-     *
-     * @var double
-     */
-    public $multiplier_increment;
-
-    /**
-     * Whether this item has already been discovered.
-     *
-     * @var boolean
-     */
-    public $discovered;
-
-    public function discoveredBy(): Player {
-        return $this->hasOne('App\Models\Player', 'discovered_by_id');
+    public function events() {
+        return $this->belongsTo('App\Models\Event');
     }
 }

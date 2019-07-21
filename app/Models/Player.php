@@ -9,43 +9,23 @@ class Player extends Model
     public $incrementing = true;
     public $timestamps = true;
 
+    protected $attributes = [
+        'level' => 1,
+        'score' => 0,
+    ];
 
-    /**
-     * A custom player identifier, this number must be unique.
-     *
-     * @var int
-     */
-    public $number;
+    public function discoveredItems() {
+        return $this->hasMany('App\Models\Item', 'discovered_by_id');
+    }
 
-    /**
-     * The player's first name.
-     *
-     * @var string
-     */
-    public $first_name;
-
-    /**
-     * The player's last name.
-     *
-     * @var string
-     */
-    public $last_name;
-
-    /**
-     * The player's level in the game.
-     *
-     * @var int
-     */
-    public $level;
-
-    /**
-     * The player's individual score in the game.
-     *
-     * @var int
-     */
-    public $score;
-
-    public function team(): Team {
+    public function team() {
         return $this->belongsTo('App\Models\Team');
+    }
+
+    /**
+     * The events that this player has induced.
+     */
+    public function events() {
+        return $this->belongsTo('App\Models\Event');
     }
 }

@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Item;
+use App\Models\Team;
+use App\Models\Player;
+
 use Illuminate\Http\Request;
+
 
 class ItemController extends Controller
 {
@@ -15,7 +19,31 @@ class ItemController extends Controller
     public function index()
     {
         //
-        echo 'coucou';
+        $team = new Team();
+        $team->name = "Test team";
+
+        $team->save();
+
+        $player = new Player();
+        $player->first_name = 'Florian';
+        $player->last_name = 'Alonso';
+        $player->team()->associate($team);
+
+        $player->save();
+
+        $item = new Item();
+        $item->name = 'Un objet';
+        $item->certificate_number = 'A32';
+        $item->discovery_points = 10;
+        $item->adventure_points = 10;
+
+        $item->save();
+
+        $item->discoveredBy()->associate($player);
+
+        $item->save();
+
+
     }
 
     /**

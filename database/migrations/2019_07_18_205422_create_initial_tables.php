@@ -13,6 +13,17 @@ class CreateInitialTables extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists('events');
+        Schema::create('events', function(Blueprint $table) {
+            $table->increments('id');
+            $table->string('value');
+            $table->string('type');
+            $table->unsignedInteger('item_id')->nullable();
+            $table->unsignedInteger('player_id')->nullable();
+            $table->unsignedInteger('team_id')->nullable();
+            $table->timestamps();
+        });
+
         Schema::dropIfExists('items');
         Schema::create('items', function(Blueprint $table) {
             $table->increments('id');
@@ -29,6 +40,7 @@ class CreateInitialTables extends Migration
         Schema::dropIfExists('players');
         Schema::create('players', function(Blueprint $table) {
             $table->increments('id');
+            $table->string('code');
             $table->string('first_name');
             $table->string('last_name');
             $table->integer('level')->default(1);
@@ -54,6 +66,11 @@ class CreateInitialTables extends Migration
         Schema::table('players', function(Blueprint $table) {
             $table->foreign('team_id')->references('id')->on('teams');
         });
+        Schema::table('events', function(Blueprint $table) {
+            $table->foreign('player_id')->references('id')->on('players');
+            $table->foreign('team_id')->references('id')->on('teams');
+            $table->foreign('item_id')->references('id')->on('items');
+        });
     }
 
     /**
@@ -63,7 +80,10 @@ class CreateInitialTables extends Migration
      */
     public function down()
     {
+        // Must preserve this order because of the foreign keys
+        Schema::dropIfExists('events');
         Schema::dropIfExists('items');
         Schema::dropIfExists('players');
+        Schema::dropIfExists('teams');
     }
 }
