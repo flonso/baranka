@@ -32,6 +32,9 @@ Run development server:
 
 `php artisan serve`
 
+**Important**
+Do not forget to run migrations before starting developing by executing `php artisan migrate`.
+
 ## Important folders
 
 - Controllers are stored in [app/Http/Controllers](./app/Http/Controllers)
