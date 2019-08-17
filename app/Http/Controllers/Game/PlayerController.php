@@ -2,19 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Player;
+use App\Http\Controllers\Controller;
+use App\Models\Common\PaginationParameters;
+use App\Models\Eloquent\Player;
 use Illuminate\Http\Request;
+
+use Illuminate\Support\Facades\DB;
 
 class PlayerController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of all players, paginated.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function list(Request $request)
     {
-        //
+
+        $params = new PaginationParameters(
+            intval($request->input('page'))
+        );
+
+        $query = DB::table('players')
+            ->offset($params->offset)
+            ->limit($params->limit)
+        ;
+
+        $data = $query->get();
+
+        return response()->json([
+            'data' => $data,
+            'count' => Player::count()
+        ]);
     }
 
     /**
@@ -41,7 +60,7 @@ class PlayerController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Player  $player
+     * @param  \App\Models\Eloquent\Player  $player
      * @return \Illuminate\Http\Response
      */
     public function show(Player $player)
@@ -52,7 +71,7 @@ class PlayerController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Player  $player
+     * @param  \App\Models\Eloquent\Player  $player
      * @return \Illuminate\Http\Response
      */
     public function edit(Player $player)
@@ -64,7 +83,7 @@ class PlayerController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Player  $player
+     * @param  \App\Models\Eloquent\Player  $player
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Player $player)
@@ -75,7 +94,7 @@ class PlayerController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Player  $player
+     * @param  \App\Models\Eloquent\Player  $player
      * @return \Illuminate\Http\Response
      */
     public function destroy(Player $player)

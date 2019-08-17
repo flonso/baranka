@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Eloquent;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
-class Player extends Model
+class Player extends BaseModel
 {
     public $incrementing = true;
     public $timestamps = true;
@@ -26,6 +26,10 @@ class Player extends Model
      * The events that this player has induced.
      */
     public function events() {
-        return $this->belongsTo('App\Models\Event');
+        return $this->belongsTo('App\Models\Eloquent\Event');
+    }
+
+    public static function count() {
+        return DB::table('players')->count();
     }
 }

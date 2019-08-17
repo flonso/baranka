@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Eloquent;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Eloquent\BaseModel;
 
 // TODO: Make this table more generic by replacing the hasOne Item relationship by hasOne Resource relationship (polymorphism ?)
-class Event extends Model
+class Event extends BaseModel
 {
     public $incrementing = true;
     public $timestamps = true;
@@ -14,7 +14,7 @@ class Event extends Model
      * The player that induced this event.
      */
     public function player() {
-        return $this->hasOne('App\Models\Player');
+        return $this->hasOne('App\Models\Eloquent\Player');
     }
 
     /**
@@ -29,5 +29,9 @@ class Event extends Model
      */
     public function team() {
         return $this->hasOne('App\Models\Team');
+    }
+
+    public function gamePhase() {
+        return $this->belongsTo('App\Models\Eloquent\GamePhase');
     }
 }
