@@ -17,20 +17,20 @@ class CreatePlayerRequest extends BaseFormRequest
                 'required',
                 'min:1',
                 'max:250',
-                // https://www.php.net/manual/fr/regexp.reference.unicode.php
                 "regex:" . RegexHelpers::NAME_REGEX
             ],
             'lastName' => [
                 'required',
-                // https://www.php.net/manual/fr/regexp.reference.unicode.php
                 "regex:" . RegexHelpers::NAME_REGEX
             ],
             'code' => [
                 'required'
             ],
             'teamId' => [
+                'required',
+                'regex:' . RegexHelpers::INTEGER_REGEX,
                 'exists:teams,id'
-            ]
+            ],
         ];
     }
 
@@ -43,6 +43,7 @@ class CreatePlayerRequest extends BaseFormRequest
         return [
             'required' => "Le champ ':attribute' du joueur est requis.",
             'teamId.exists' => "Il n'y a pas d'équipe portant l'id '$this->teamId'",
+            'teamId.regex' => "L'identifiant d'équipe est invalide",
             'regex' => "Le champ ':attribute' contient des caractères invalides"
         ];
     }

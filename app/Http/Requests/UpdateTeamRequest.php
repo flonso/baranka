@@ -25,8 +25,8 @@ class UpdateTeamRequest extends BaseFormRequest
 
     public function messages() {
         return [
-            'scoreIncrement.regex' => "La valeur d'incrémentation du score doit être un nombre entier ($this->scoreIncrement reçu)",
-            'scoreMultiplierIncrement' => "La valeur d'incrémentation du multiplicateur de score doit être un nombre entier ou décimal ($this->scoreMultiplierIncrement reçu)"
+            'scoreIncrement.regex' => "La valeur d'incrémentation du score doit être un nombre entier ('$this->scoreIncrement' reçu)",
+            'scoreMultiplierIncrement.regex' => "La valeur d'incrémentation du multiplicateur de score doit être un nombre entier ou décimal ('$this->scoreMultiplierIncrement' reçu)"
         ];
     }
 }

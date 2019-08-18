@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Support\Facades\DB;
 
 use App\Exceptions\Validation\TeamValidationExceptions;
+use App\Http\Requests\UpdateTeamRequest;
 use App\Models\Eloquent\BaseModel;
 use App\Models\Eloquent\Event;
 use App\Models\Eloquent\EventType;
@@ -67,25 +68,25 @@ class Team extends BaseModel
      *
      * @return array An array of events generated for each data changed
      */
-    public function updateFromData(array $data) {
+    public function updateFromData(UpdateTeamRequest $update) {
         $events = [];
 
-        if (isset($data['scoreIncrement'])) {
+        if (isset($update->scoreIncrement)) {
             $event = new Event();
-            $event->value = $data['scoreIncrement'];
+            $event->value = $update->scoreIncrement;
             $event->type = ($event->value > 0) ? EventType::BONUS : EventType::MALUS;
             $events[] = $event;
 
-            $this->score += $data['scoreIncrement'];
+            $this->score += $update->scoreIncrement;
         }
 
-        if (isset($data['scoreMultiplierIncrement'])) {
+        if (isset($update->scoreMultiplierIncrement)) {
             $event = new Event();
-            $event->value = $data['scoreMultiplierIncrement'];
+            $event->value = $update->scoreMultiplierIncrement;
             $event->type = EventType::MULTIPLIER;
             $events[] = $event;
 
-            $this->score_multiplier += $data['scoreMultiplierIncrement'];
+            $this->score_multiplier += $update->scoreMultiplierIncrement;
         }
 
         return $events;

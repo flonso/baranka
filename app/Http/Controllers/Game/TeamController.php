@@ -29,10 +29,8 @@ class TeamController extends Controller
             ->limit($params->limit)
         ;
 
-        $data = $query->get();
-
         return response()->json([
-            'data' => $data,
+            'data' => $query->get(),
             'count' => Team::count()
         ]);
     }
@@ -42,15 +40,23 @@ class TeamController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(CreateTeamRequest $request) {
-        $input = $request->json()->all();
-
+    public function create(CreateTeamRequest $create) {
         $team = new Team();
-        $team->name = $input['name'];
-        $team->score = $input['initialScore'];
-        $team->score_multiplier = $input['initialScoreMultiplier'];
+        $team->name = $create->name;
+        $team->score = $create->initialScore;
+        $team->score_multiplier = $create->initialScoreMultiplier;
 
-        $team->save();
+        if ($team->save()) {
+            return response()->json(
+                $team,
+                201
+            );
+        }
+
+        return response()->json(
+            ApiExceptions::CouldNotSaveData()->toArray(),
+            500
+        );
     }
 
     /**
@@ -77,21 +83,11 @@ class TeamController extends Controller
      * @param  \App\Models\Team  $team
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateTeamRequest $request, Team $team)
+    public function update(UpdateTeamRequest $update, Team $team)
     {
         if ($team) {
-            $data = $request->json()->all();
-
-            try {
-                $data = Team::isUpdateValid($data);
-            } catch (BaseException $e) {
-                return response()->json(
-                    $e->toArray(),
-                    400
-                );
-            }
-
-            $events = $team->updateFromData($data);
+            // FIXME: Do this in a transaction to avoid broken state
+            $events = $team->updateFromData($update);
 
             if (is_array($events) && count($events) > 0) {
                 if ($gamePhase = GamePhase::current()) {
@@ -107,9 +103,14 @@ class TeamController extends Controller
                 }
             }
 
-            $team->save();
+            if ($team->save()) {
+                return response()->json($team);
+            }
 
-            return response()->json($team);
+            return response()->json(
+                ApiExceptions::CouldNotSaveData()->toArray(),
+                500
+            );
         } else {
             return response(
                 'The requested resource could not be found.',

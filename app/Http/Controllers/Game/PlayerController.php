@@ -6,7 +6,6 @@ use App\Exceptions\ApiExceptions;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreatePlayerRequest;
 use App\Models\Common\PaginationParameters;
-use App\Models\Eloquent\BaseModel;
 use App\Models\Eloquent\Player;
 use App\Models\Team;
 use Illuminate\Http\Request;
@@ -32,10 +31,8 @@ class PlayerController extends Controller
             ->limit($params->limit)
         ;
 
-        $data = $query->get();
-
         return response()->json([
-            'data' => $data,
+            'data' => $query->get(),
             'count' => Player::count()
         ]);
     }
@@ -45,66 +42,43 @@ class PlayerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(CreatePlayerRequest $request)
+    public function create(CreatePlayerRequest $create)
     {
-        $input = $request->json()->all();
-
-        $teamId = $input['teamId'];
+        $teamId = $create->teamId;
         $team = DB::table('teams')->find($teamId);
 
-        if ($team == null) {
+        if ($team != null) {
+            $team = Team::toInstance($team, new Team());
+        } else {
             return response(
                 "There is no team with id '$teamId'",
                 404
             );
-        } else {
-            $team = Team::toInstance($team, new Team());
         }
 
         $player = new Player();
-        $player->code = $input['code'];
-        $player->first_name = $input['firstName'];
-        $player->last_name = $input['lastName'];
+        $player->code = $create->code;
+        $player->first_name = $create->firstName;
+        $player->last_name = $create->lastName;
         $player->level = 1;
         $player->score = 0;
         $player->team()->associate($team);
 
-        $saved = $player->save();
-
-        if (!$saved) {
+        if ($player->save()) {
             return response()->json(
-                ApiExceptions::CouldNotSaveData()->toArray(),
-                500
+                $player,
+                201
             );
         }
 
-        return response()->json($player);
+        return response()->json(
+            ApiExceptions::CouldNotSaveData()->toArray(),
+            500
+        );
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Eloquent\Player  $player
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Player $player)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Eloquent\Player  $player
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Player $player)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
+     * Update the given player's data.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Eloquent\Player  $player
@@ -121,7 +95,7 @@ class PlayerController extends Controller
      * @param  \App\Models\Eloquent\Player  $player
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Player $player)
+    public function delete(Player $player)
     {
         //
     }
