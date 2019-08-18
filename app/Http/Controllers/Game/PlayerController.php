@@ -78,6 +78,25 @@ class PlayerController extends Controller
     }
 
     /**
+     * Return the matching player.
+     *
+     * @param  \App\Models\Eloquent\Player  $player
+     * @return \Illuminate\Http\Response
+     */
+    public function get(Player $player)
+    {
+        // FIXME: 404 automated response is html but must be JSON
+        if ($player) {
+            return response()->json($player);
+        } else {
+            return response(
+                'The requested resource could not be found.',
+                404
+            );
+        }
+    }
+
+    /**
      * Update the given player's data.
      *
      * @param  \Illuminate\Http\Request  $request

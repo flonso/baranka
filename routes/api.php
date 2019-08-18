@@ -23,6 +23,7 @@ Route::patch('/items/{itemId}/found', 'ItemController@found');
 
 Route::get('/players', 'PlayerController@list');
 Route::post('/players', 'PlayerController@create');
+Route::get('/players/{player}', 'PlayerController@get');
 Route::patch('/players/{player}/level', 'PlayerController@updateLevel');
 Route::patch('/players/{player}/manual-points', 'PlayerController@applyPoints');
 
