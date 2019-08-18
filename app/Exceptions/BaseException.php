@@ -4,13 +4,21 @@ namespace App\Exceptions;
 
 use Exception;
 
-class BaseException extends Exception {
+abstract class BaseException extends Exception {
+  /**
+   * Gets an optional array of additional errors
+   *
+   * @return array|null
+   */
+  function getErrors() {
+    return null;
+  }
+
   public function toArray() {
     return [
-      'error' => [
-        'code' => $this->getCode(),
-        'message' => $this->getMessage()
-      ]
+      'message' => $this->getMessage(),
+      'code' => $this->getCode(),
+      'errors' => $this->getErrors()
     ];
   }
 }

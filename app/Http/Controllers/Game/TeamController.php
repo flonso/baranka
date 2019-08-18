@@ -7,7 +7,8 @@ use App\Models\Team;
 use App\Models\Eloquent\GamePhase;
 use App\Models\Common\PaginationParameters;
 use App\Exceptions\GameExceptions;
-
+use App\Http\Requests\CreateTeamRequest;
+use App\Http\Requests\UpdateTeamRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -41,13 +42,13 @@ class TeamController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request) {
-        $data = $request->json()->all();
+    public function create(CreateTeamRequest $request) {
+        $input = $request->json()->all();
 
         $team = new Team();
-        $team->name = $data['name'];
-        $team->score = $data['initialScore'];
-        $team->score_multiplier = $data['initialScoreMultiplier'];
+        $team->name = $input['name'];
+        $team->score = $input['initialScore'];
+        $team->score_multiplier = $input['initialScoreMultiplier'];
 
         $team->save();
     }
@@ -76,7 +77,7 @@ class TeamController extends Controller
      * @param  \App\Models\Team  $team
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Team $team)
+    public function update(UpdateTeamRequest $request, Team $team)
     {
         if ($team) {
             $data = $request->json()->all();

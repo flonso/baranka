@@ -62,43 +62,6 @@ class Team extends BaseModel
     }
 
     /**
-     * Checks whether the given data is valid for a team update.
-     *
-     * @param array $data
-     * @return array The array of validated data if everything went fine
-     */
-    public static function isUpdateValid(array $data) {
-        $validatedData = [];
-        if (
-            isset($data['scoreIncrement']) &&
-            $scoreIncrement = $data['scoreIncrement']
-        ) {
-            if (is_numeric($scoreIncrement)) {
-                $validatedData['scoreIncrement'] = intval($scoreIncrement);
-            } else {
-                throw TeamValidationExceptions::InvalidScoreIncrement(
-                    $scoreIncrement
-                );
-            }
-        }
-
-        if (
-            isset($data['scoreMultiplierIncrement']) &&
-            $scoreMultiplierIncrement = $data['scoreMultiplierIncrement']
-        ) {
-            if (is_numeric($scoreMultiplierIncrement)) {
-                $validatedData['scoreMultiplierIncrement'] = floatval($scoreMultiplierIncrement);
-            } else {
-                throw TeamValidationExceptions::InvalidScoreMultiplierIncrement(
-                    $scoreMultiplierIncrement
-                );
-            }
-        }
-
-        return $validatedData;
-    }
-
-    /**
      * Assigns the given data to the current team instance. For each field updated,
      * an event is generated so it can be stored in database.
      *
