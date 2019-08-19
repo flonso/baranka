@@ -2,6 +2,7 @@
 
 namespace App\Models\Eloquent;
 
+use App\Exceptions\ApiExceptions;
 use Illuminate\Database\Eloquent\Model;
 
 abstract class BaseModel extends Model {
@@ -36,4 +37,28 @@ abstract class BaseModel extends Model {
     }
 
     abstract public static function count();
+
+
+    /**
+     * Retrieve the model for a bound value. Will return a JSON
+     * response in case it is not found.
+     *
+     * @param  mixed  $value
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function resolveRouteBinding($value) {
+        $fetched = $this->where('id', $value)->first();
+
+        if ($fetched == null) {
+            $name = (new \ReflectionClass($this))->getShortName();
+            abort(
+                response()->json(
+                    ApiExceptions::ModelNotFound($name, $value)->toArray(),
+                    404
+                )
+            );
+        }
+
+        return $fetched;
+    }
 }

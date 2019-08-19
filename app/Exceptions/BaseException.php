@@ -15,10 +15,16 @@ abstract class BaseException extends Exception {
   }
 
   public function toArray() {
-    return [
+    $arr = [
       'message' => $this->getMessage(),
-      'code' => $this->getCode(),
-      'errors' => $this->getErrors()
+      'code' => $this->getCode()
     ];
+
+    $errors = $this->getErrors();
+    if ($errors != null) {
+      $arr['errors'] = $errors;
+    }
+
+    return $arr;
   }
 }

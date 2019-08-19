@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Item;
-use App\Models\Team;
+use App\Models\Eloquent\Team;
 use App\Models\Eloquent\Player;
 
 use Illuminate\Http\Request;

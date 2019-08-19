@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Eloquent;
 
 use Illuminate\Support\Facades\DB;
 
-use App\Exceptions\Validation\TeamValidationExceptions;
 use App\Http\Requests\UpdateTeamRequest;
 use App\Models\Eloquent\BaseModel;
 use App\Models\Eloquent\Event;
@@ -90,5 +89,9 @@ class Team extends BaseModel
         }
 
         return $events;
+    }
+
+    public function resolveRouteBinding($value) {
+        return parent::resolveRouteBinding($value);
     }
 }

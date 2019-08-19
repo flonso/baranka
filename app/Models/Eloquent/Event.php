@@ -28,7 +28,7 @@ class Event extends BaseModel
      * The team that induced this event.
      */
     public function team() {
-        return $this->hasOne('App\Models\Team');
+        return $this->hasOne('App\Models\Eloquent\Team');
     }
 
     public function gamePhase() {

@@ -10,6 +10,10 @@ class ApiExceptions {
   public static function InvalidData(array $errors) {
     return new InvalidData($errors);
   }
+
+  public static function ModelNotFound(string $modelName, $value) {
+    return new ModelNotFound($modelName, $value);
+  }
 }
 
 class CouldNotSaveData extends BaseException {
@@ -28,12 +32,21 @@ class InvalidData extends BaseException {
     $this->errors = $errors;
     parent::__construct(
       $message = "Des données invalides ont été envoyées.",
-      $code = 9100
+      $code = 9101
     );
   }
 
   public function getErrors()
   {
     return $this->errors;
+  }
+}
+
+class ModelNotFound extends BaseException {
+  function __construct(string $modelName, $value) {
+    parent::__construct(
+      $message = "Aucun objet de type $modelName trouvé pour l'id '$value'",
+      $code = 9102
+    );
   }
 }

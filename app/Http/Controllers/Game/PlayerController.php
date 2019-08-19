@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreatePlayerRequest;
 use App\Models\Common\PaginationParameters;
 use App\Models\Eloquent\Player;
-use App\Models\Team;
+use App\Models\Eloquent\Team;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\DB;

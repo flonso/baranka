@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\BaseException;
-use App\Models\Team;
+use App\Models\Eloquent\Team;
 use App\Models\Eloquent\GamePhase;
 use App\Models\Common\PaginationParameters;
 use App\Exceptions\GameExceptions;
@@ -62,7 +62,7 @@ class TeamController extends Controller
     /**
      * Return the given team.
      *
-     * @param  \App\Models\Team  $team
+     * @param  \App\Models\Eloquent\Team  $team
      * @return \Illuminate\Http\Response
      */
     public function get(Team $team)
@@ -80,7 +80,7 @@ class TeamController extends Controller
     /**
      * Update the given team with patch data
      *
-     * @param  \App\Models\Team  $team
+     * @param  \App\Models\Eloquent\Team  $team
      * @return \Illuminate\Http\Response
      */
     public function update(UpdateTeamRequest $update, Team $team)

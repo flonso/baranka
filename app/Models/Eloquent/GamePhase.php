@@ -2,10 +2,9 @@
 
 namespace App\Models\Eloquent;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class GamePhase extends Model
+class GamePhase extends BaseModel
 {
     public $incrementing = true;
     public $timestamps = true;
