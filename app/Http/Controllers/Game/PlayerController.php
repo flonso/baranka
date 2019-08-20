@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\ApiExceptions;
+use App\Exceptions\GameExceptions;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreatePlayerRequest;
+use App\Http\Requests\UpdatePlayerRequest;
 use App\Models\Common\PaginationParameters;
+use App\Models\Eloquent\GamePhase;
 use App\Models\Eloquent\Player;
 use App\Models\Eloquent\Team;
 use Illuminate\Http\Request;
@@ -83,39 +86,42 @@ class PlayerController extends Controller
      * @param  \App\Models\Eloquent\Player  $player
      * @return \Illuminate\Http\Response
      */
-    public function get(Player $player)
-    {
-        // FIXME: 404 automated response is html but must be JSON
-        if ($player) {
-            return response()->json($player);
-        } else {
-            return response(
-                'The requested resource could not be found.',
-                404
-            );
-        }
+    public function get(Player $player) {
+        return response()->json($player);
     }
 
     /**
      * Update the given player's data.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  UpdatePlayerRequest  $update
      * @param  \App\Models\Eloquent\Player  $player
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Player $player)
-    {
-        //
-    }
+    public function update(UpdatePlayerRequest $update, Player $player) {
+        $events = $player->updateFromData($update);
+        $allSaved = true;
+        if (is_array($events) && count($events) > 0) {
+            if ($gamePhase = GamePhase::current()) {
+                foreach ($events as $e) {
+                    $e->gamePhase()->associate($gamePhase);
+                    $allSaved = $allSaved && $e->save();
+                }
+            } else {
+                return response()->json(
+                    GameExceptions::NoGamePhaseStarted()->toArray(),
+                    400
+                );
+            }
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Eloquent\Player  $player
-     * @return \Illuminate\Http\Response
-     */
-    public function delete(Player $player)
-    {
-        //
+        $allSaved = $allSaved && $player->save();
+        if ($allSaved) {
+            return response()->json($player);
+        }
+
+        return response()->json(
+            ApiExceptions::CouldNotSaveData()->toArray(),
+            500
+        );
     }
 }

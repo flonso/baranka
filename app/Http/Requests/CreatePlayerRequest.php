@@ -24,7 +24,8 @@ class CreatePlayerRequest extends BaseFormRequest
                 "regex:" . RegexHelpers::NAME_REGEX
             ],
             'code' => [
-                'required'
+                'min:1',
+                'max:250'
             ],
             'teamId' => [
                 'required',

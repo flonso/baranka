@@ -14,24 +14,28 @@ class Event extends BaseModel
      * The player that induced this event.
      */
     public function player() {
-        return $this->hasOne('App\Models\Eloquent\Player');
+        return $this->belongsTo('App\Models\Eloquent\Player');
     }
 
     /**
      * The item that induced this event.
      */
     public function item() {
-        return $this->hasOne('App\Models\Item');
+        return $this->belongsTo('App\Models\Item');
     }
 
     /**
      * The team that induced this event.
      */
     public function team() {
-        return $this->hasOne('App\Models\Eloquent\Team');
+        return $this->belongsTo('App\Models\Eloquent\Team');
     }
 
     public function gamePhase() {
         return $this->belongsTo('App\Models\Eloquent\GamePhase');
+    }
+
+    public static function count() {
+        return DB::table('events')->count();
     }
 }

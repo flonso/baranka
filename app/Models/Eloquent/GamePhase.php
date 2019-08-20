@@ -23,4 +23,8 @@ class GamePhase extends BaseModel
             ->orderBy('start_datetime')
             ->first();
     }
+
+    public static function count() {
+        return DB::table('game_phases')->count();
+    }
 }

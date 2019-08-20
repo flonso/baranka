@@ -3,6 +3,7 @@
 namespace App\Models\Eloquent;
 
 use App\Exceptions\ApiExceptions;
+use App\Http\Requests\UpdatePlayerRequest;
 use Illuminate\Database\Eloquent\Model;
 
 abstract class BaseModel extends Model {
@@ -37,7 +38,6 @@ abstract class BaseModel extends Model {
     }
 
     abstract public static function count();
-
 
     /**
      * Retrieve the model for a bound value. Will return a JSON

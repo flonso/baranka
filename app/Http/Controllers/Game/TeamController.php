@@ -65,16 +65,8 @@ class TeamController extends Controller
      * @param  \App\Models\Eloquent\Team  $team
      * @return \Illuminate\Http\Response
      */
-    public function get(Team $team)
-    {
-        if ($team) {
-            return response()->json($team);
-        } else {
-            return response(
-                'The requested resource could not be found.',
-                404
-            );
-        }
+    public function get(Team $team) {
+        return response()->json($team);
     }
 
     /**
@@ -83,39 +75,31 @@ class TeamController extends Controller
      * @param  \App\Models\Eloquent\Team  $team
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateTeamRequest $update, Team $team)
-    {
-        if ($team) {
-            // FIXME: Do this in a transaction to avoid broken state
-            $events = $team->updateFromData($update);
+    public function update(UpdateTeamRequest $update, Team $team) {
+        // FIXME: Do this in a transaction to avoid broken state
+        $events = $team->updateFromData($update);
 
-            if (is_array($events) && count($events) > 0) {
-                if ($gamePhase = GamePhase::current()) {
-                    foreach ($events as $e) {
-                        $e->gamePhase()->associate($gamePhase);
-                        $e->save();
-                    }
-                } else {
-                    return response()->json(
-                        GameExceptions::NoGamePhaseStarted()->toArray(),
-                        400
-                    );
+        if (is_array($events) && count($events) > 0) {
+            if ($gamePhase = GamePhase::current()) {
+                foreach ($events as $e) {
+                    $e->gamePhase()->associate($gamePhase);
+                    $e->save();
                 }
+            } else {
+                return response()->json(
+                    GameExceptions::NoGamePhaseStarted()->toArray(),
+                    400
+                );
             }
-
-            if ($team->save()) {
-                return response()->json($team);
-            }
-
-            return response()->json(
-                ApiExceptions::CouldNotSaveData()->toArray(),
-                500
-            );
-        } else {
-            return response(
-                'The requested resource could not be found.',
-                404
-            );
         }
+
+        if ($team->save()) {
+            return response()->json($team);
+        }
+
+        return response()->json(
+            ApiExceptions::CouldNotSaveData()->toArray(),
+            500
+        );
     }
 }

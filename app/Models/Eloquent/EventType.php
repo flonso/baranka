@@ -11,6 +11,6 @@ class EventType {
   const MALUS = 'malus';
   const BOAT = 'boat';
   const MULTIPLIER = 'multiplier';
-  const LEVEL_UP = 'level_up';
+  const LEVEL_CHANGE = 'level_change';
   const TREASURE = 'treasure';
 }
