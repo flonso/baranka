@@ -34,5 +34,5 @@ Route::post('/teams/{team}/players/{playerId}', 'TeamController@addPlayer');
 Route::get('/teams/ranking', 'TeamController@ranking');
 Route::get('/teams/ranking/{category}', 'TeamController@rankingForCategory');
 
-Route::get('/game-start', 'GameController@start');
-Route::get('/game-stop', 'GameController@stop');
+Route::post('/game/start', 'GameController@start');
+Route::post('/game/stop', 'GameController@stop');

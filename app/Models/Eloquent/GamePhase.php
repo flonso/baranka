@@ -18,10 +18,30 @@ class GamePhase extends BaseModel
     }
 
     public static function current() {
-        return DB::table('game_phases')
+        $obj = DB::table('game_phases')
             ->whereNull('end_datetime')
             ->orderBy('start_datetime')
             ->first();
+
+        if ($obj == null) return null;
+
+        return self::toInstance(
+            $obj,
+            new GamePhase()
+        );
+    }
+
+    public static function last() {
+        $obj = DB::table('game_phases')
+            ->orderBy('start_datetime')
+            ->first();
+
+        if ($obj == null) return null;
+
+        return self::toInstance(
+            $obj,
+            new GamePhase()
+        );
     }
 
     public static function count() {

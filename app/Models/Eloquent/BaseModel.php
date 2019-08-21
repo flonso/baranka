@@ -19,7 +19,7 @@ abstract class BaseModel extends Model {
     public static function toInstance(\stdClass $obj, Model $targetModel) {
         $backupFillable = $targetModel->getFillable();
 
-        // FIXME: This might be unsafe ?
+        // FIXME: This might be unsafe if we customized column names...
         $columns = $targetModel->getConnection()
             ->getSchemaBuilder()
             ->getColumnListing(
