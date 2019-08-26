@@ -24,7 +24,6 @@ class PlayerController extends Controller
      */
     public function list(Request $request)
     {
-
         $params = new PaginationParameters(
             intval($request->input('page'))
         );
@@ -82,7 +81,6 @@ class PlayerController extends Controller
 
     /**
      * Return the matching player.
-     *
      * @param  \App\Models\Eloquent\Player  $player
      * @return \Illuminate\Http\Response
      */
@@ -98,6 +96,7 @@ class PlayerController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(UpdatePlayerRequest $update, Player $player) {
+
         $events = $player->updateFromData($update);
         $allSaved = true;
         if (is_array($events) && count($events) > 0) {

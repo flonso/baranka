@@ -3,6 +3,7 @@
 namespace App\Models\Eloquent;
 
 use App\Exceptions\ApiExceptions;
+use App\Exceptions\BaseException;
 use App\Http\Requests\UpdatePlayerRequest;
 use Illuminate\Database\Eloquent\Model;
 

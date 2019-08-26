@@ -7,6 +7,7 @@ class EventType {
 
   const ITEM = 'item';
   const ITEM_FOUND = 'item_found';
+  const BOARD = 'board';
   const BONUS = 'bonus';
   const MALUS = 'malus';
   const BOAT = 'boat';

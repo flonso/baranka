@@ -16,6 +16,35 @@ PHP Requirements:
 - Tokenizer PHP Extension
 - XML PHP Extension
 
+## Development progress
+- Teams
+  - [x] Create with name, initial score and initial score multiplier
+  - [x] Update with manual bonus/penalty on score and score multiplier
+  - [x] Retrieve basic team information (name, current score and score multiplier)
+  - [ ] Retrieve the global team ranking based on points per event category
+- Players
+  - [x] Create a player with first name, last name, team and an optional unique code identifier
+  - [x] Update a player's level, score or code.
+  - [x] Identify a player based on
+    - [x] An id
+    - [x] A code value
+  - [ ] Retrieve the global player ranking
+- Game phases
+  - [x] Start a new game phase, possibility to give a custom phase number (to compute items' based on it)
+  - [x] Stop a game phase
+- Items
+  - Create an item with name, amount of points gained for discovery, amounts of points gained with the related sidequest, starting phase for its discovery, score multiplier increase value and discovery status.
+  - [ ] Update an item's found status
+    - [ ] Distribute discovery points based on game phase and number of players to register it.
+    - [ ] Number of points should be computed as: points = basepoints * (1 - (game_phase_discovered - game_phase_discoverable)* 0.1)
+- Events
+  - [ ] Save an event for each gain/loss of points as well as who it benefits to
+  - [ ] Track which user of the system has performed an action (optional)
+  - [ ] Compute rankings per event category
+- [ ] Custom value settings
+  - [ ] Configure value used for computations (such as score, item loss of value, ...)
+
+
 
 ## Development server
 Install project dependencies:
