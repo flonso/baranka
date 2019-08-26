@@ -19,7 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::get('/items', 'ItemController@list');
 Route::post('/items', 'ItemController@create');
-Route::patch('/items/{itemId}/found', 'ItemController@found');
+Route::patch('/items/{item}', 'ItemController@update');
 
 Route::get('/players', 'PlayerController@list');
 Route::post('/players', 'PlayerController@create');

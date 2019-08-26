@@ -21,7 +21,7 @@ class Event extends BaseModel
      * The item that induced this event.
      */
     public function item() {
-        return $this->belongsTo('App\Models\Item');
+        return $this->belongsTo('App\Models\Eloquent\Item');
     }
 
     /**

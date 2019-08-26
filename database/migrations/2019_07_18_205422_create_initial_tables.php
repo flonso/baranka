@@ -30,6 +30,7 @@ class CreateInitialTables extends Migration
             $table->string('name');
             $table->string('certificate_number');
             $table->integer('discovery_points');
+            // TODO: This could be replaced with a relation to another table which defines a series of quests/steps
             $table->integer('adventure_points');
             $table->double('multiplier_increment');
             $table->boolean('discovered')->default(false);
@@ -40,7 +41,7 @@ class CreateInitialTables extends Migration
         Schema::dropIfExists('players');
         Schema::create('players', function(Blueprint $table) {
             $table->increments('id');
-            $table->string('code');
+            $table->string('code')->nullable();
             $table->string('first_name');
             $table->string('last_name');
             $table->integer('level')->default(1);

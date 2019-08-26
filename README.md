@@ -28,6 +28,7 @@ PHP Requirements:
   - [x] Identify a player based on
     - [x] An id
     - [x] A code value
+  - [ ] Store additional player info
   - [ ] Retrieve the global player ranking
 - Game phases
   - [x] Start a new game phase, possibility to give a custom phase number (to compute items' based on it)

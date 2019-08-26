@@ -17,7 +17,7 @@ class Player extends BaseModel
     ];
 
     public function discoveredItems() {
-        return $this->hasMany('App\Models\Item', 'discovered_by_id');
+        return $this->belongsToMany('App\Models\Eloquent\Item');
     }
 
     public function team() {
