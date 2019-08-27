@@ -27,4 +27,11 @@ abstract class BaseException extends Exception {
 
     return $arr;
   }
+
+  public function toResponse(int $status = 400) {
+    return response()->json(
+      $this->toArray(),
+      $status
+    );
+  }
 }

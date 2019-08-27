@@ -70,28 +70,9 @@ class ItemController extends Controller
      */
     public function update(UpdateItemRequest $update, Item $item) {
         $events = $item->updateFromData($update);
-
-        if (is_array($events) && count($events) > 0) {
-            if ($gamePhase = GamePhase::current()) {
-                foreach ($events as $e) {
-                    $e->gamePhase()->associate($gamePhase);
-                    $e->save();
-                }
-            } else {
-                return response()->json(
-                    GameExceptions::NoGamePhaseStarted()->toArray(),
-                    400
-                );
-            }
-        }
-
-        if ($item->save()) {
-            return response()->json($item);
-        }
-
-        return response()->json(
-            ApiExceptions::CouldNotSaveData()->toArray(),
-            500
+        return $this->persistEventsWithModel(
+            $item,
+            $events
         );
     }
 }

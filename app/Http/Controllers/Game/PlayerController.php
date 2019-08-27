@@ -96,31 +96,10 @@ class PlayerController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(UpdatePlayerRequest $update, Player $player) {
-
         $events = $player->updateFromData($update);
-        $allSaved = true;
-        if (is_array($events) && count($events) > 0) {
-            if ($gamePhase = GamePhase::current()) {
-                foreach ($events as $e) {
-                    $e->gamePhase()->associate($gamePhase);
-                    $allSaved = $allSaved && $e->save();
-                }
-            } else {
-                return response()->json(
-                    GameExceptions::NoGamePhaseStarted()->toArray(),
-                    400
-                );
-            }
-        }
-
-        $allSaved = $allSaved && $player->save();
-        if ($allSaved) {
-            return response()->json($player);
-        }
-
-        return response()->json(
-            ApiExceptions::CouldNotSaveData()->toArray(),
-            500
+        return $this->persistEventsWithModel(
+            $player,
+            $events
         );
     }
 }

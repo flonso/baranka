@@ -11,6 +11,7 @@ use DateTimeZone;
 
 class GameController extends Controller {
     public function start(StartGameRequest $start) {
+        // FIXME: Make sure no race conditions can occur (one client starting in parallel to another)
         $lastPhase = GamePhase::last();
 
         $phaseStarted = $lastPhase != null && $lastPhase->end_datetime == null;
@@ -31,8 +32,6 @@ class GameController extends Controller {
         } else {
             $newPhase->number = ($lastPhase != null) ? $lastPhase->number + 1 : 1;
         }
-
-        print_r($newPhase);
 
         if ($newPhase->save()) {
             return response()->json($newPhase);

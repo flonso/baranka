@@ -34,7 +34,7 @@ class Item extends BaseModel
     }
 
     public function getDiscoveredAttribute() {
-        return $this->discoveredByPlayers->count() > 0;
+        return $this->discoveredByPlayers != null && $this->discoveredByPlayers->count() > 0;
     }
 
     public static function count() {
@@ -69,7 +69,7 @@ class Item extends BaseModel
 
         if (isset($update->multiplierIncrement)) {
             // TODO: If the item was found, must query all related events in order to update the points
-            $this->multiplier_increment = $this->multiplierIncrement;
+            $this->multiplier_increment = $update->multiplierIncrement;
         }
 
         if (isset($update->foundByPlayerIds)) {
@@ -84,6 +84,7 @@ class Item extends BaseModel
                 $this->discoveredByPlayers()->attach($update->foundByPlayerIds);
                 foreach ($update->foundByPlayerIds as $playerId) {
                     $event = new Event();
+                    $event->item()->associate($this);
                     $event->value = $this->discovery_points / $nbOfPlayers;
                     $event->type = EventType::ITEM_FOUND;
                     $event->player()->associate($playerId);

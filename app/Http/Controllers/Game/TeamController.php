@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ApiExceptions;
 use App\Exceptions\BaseException;
 use App\Models\Eloquent\Team;
 use App\Models\Eloquent\GamePhase;
@@ -76,30 +77,10 @@ class TeamController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(UpdateTeamRequest $update, Team $team) {
-        // FIXME: Do this in a transaction to avoid broken state
         $events = $team->updateFromData($update);
-
-        if (is_array($events) && count($events) > 0) {
-            if ($gamePhase = GamePhase::current()) {
-                foreach ($events as $e) {
-                    $e->gamePhase()->associate($gamePhase);
-                    $e->save();
-                }
-            } else {
-                return response()->json(
-                    GameExceptions::NoGamePhaseStarted()->toArray(),
-                    400
-                );
-            }
-        }
-
-        if ($team->save()) {
-            return response()->json($team);
-        }
-
-        return response()->json(
-            ApiExceptions::CouldNotSaveData()->toArray(),
-            500
+        return $this->persistEventsWithModel(
+            $team,
+            $events
         );
     }
 }

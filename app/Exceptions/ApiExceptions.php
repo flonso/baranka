@@ -14,6 +14,10 @@ class ApiExceptions {
   public static function ModelNotFound(string $modelName, $value) {
     return new ModelNotFound($modelName, $value);
   }
+
+  public static function GenericException(\Exception $e) {
+    return new GenericException($e);
+  }
 }
 
 class CouldNotSaveData extends BaseException {
@@ -47,6 +51,16 @@ class ModelNotFound extends BaseException {
     parent::__construct(
       $message = "Aucun objet de type $modelName trouvé pour l'id '$value'",
       $code = 9102
+    );
+  }
+}
+
+class GenericException extends BaseException {
+  function __construct(\Exception $e) {
+    parent::__construct(
+      $message = $e->getMessage(),
+      $code = $e->getCode(),
+      $previous = $e
     );
   }
 }
