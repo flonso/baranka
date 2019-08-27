@@ -73,17 +73,13 @@ class Team extends BaseModel
         if (isset($update->scoreIncrement)) {
             $event = new Event();
             $event->value = $update->scoreIncrement;
-            $event->type = ($event->value > 0) ? EventType::BONUS : EventType::MALUS;
+            $event->type = EventType::MANUAL_POINTS;
             $events[] = $event;
 
             $this->score += $update->scoreIncrement;
         }
 
         if (isset($update->scoreMultiplierIncrement)) {
-            $event = new Event();
-            $event->value = $update->scoreMultiplierIncrement;
-            $event->type = EventType::MULTIPLIER;
-            $events[] = $event;
 
             $this->score_multiplier += $update->scoreMultiplierIncrement;
         }

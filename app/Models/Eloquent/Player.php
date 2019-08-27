@@ -104,7 +104,7 @@ class Player extends BaseModel
         if (isset($update->scoreIncrement)) {
             $event = new Event();
             $event->value = $update->scoreIncrement;
-            $event->type = ($event->value > 0) ? EventType::BONUS : EventType::MALUS;
+            $event->type = EventType::MANUAL_POINTS;
             $event->player()->associate($this);
 
             $events[] = $event;
@@ -123,6 +123,7 @@ class Player extends BaseModel
             $this->level = $update->level;
         }
 
+		// TODO add update->board (points at the end of a game), update->quest 
         if (isset($update->teamId)) {
 
         }

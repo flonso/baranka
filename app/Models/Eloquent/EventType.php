@@ -4,14 +4,17 @@ namespace App\Models\Eloquent;
 
 class EventType {
   private function __construct() {}
-
-  const ITEM = 'item';
-  const ITEM_FOUND = 'item_found';
+  
+  //4 basic categories
   const BOARD = 'board';
-  const BONUS = 'bonus';
-  const MALUS = 'malus';
-  const BOAT = 'boat';
-  const MULTIPLIER = 'multiplier';
+  const ITEM = 'item'; 
+  const QUEST = 'quest';
   const LEVEL_CHANGE = 'level_change';
-  const TREASURE = 'treasure';
+  
+  //bonus or malus prestige points (including treasure bonus)
+  const MANUAL_POINTS = 'manual_points';
+
+  //number of boat parts, used to calculate final multiplier
+  const BOAT = 'boat';
+  
 }

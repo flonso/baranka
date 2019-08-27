@@ -101,5 +101,7 @@ class PlayerController extends Controller
             $player,
             $events
         );
+		
+		//TODO: impact on team
     }
 }

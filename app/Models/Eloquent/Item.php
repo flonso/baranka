@@ -86,7 +86,7 @@ class Item extends BaseModel
                     $event = new Event();
                     $event->item()->associate($this);
                     $event->value = $this->discovery_points / $nbOfPlayers;
-                    $event->type = EventType::ITEM_FOUND;
+                    $event->type = EventType::ITEM;
                     $event->player()->associate($playerId);
 
                     $events[] = $event;
