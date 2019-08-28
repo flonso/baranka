@@ -89,7 +89,8 @@ class Player extends BaseModel
 
     /**
      * Assigns the given data to the current player instance. For each field updated,
-     * an event is generated so it can be stored in database.
+     * an event is generated so it can be stored in databaseo or used to impact other
+     * models.
      *
      * @return array An array of events generated for each data changed
      */
@@ -99,6 +100,29 @@ class Player extends BaseModel
         if (isset($update->code)) {
             // No need to generate an event in this case
             $this->code = $update->code;
+        }
+
+        if (isset($update->firstName)) {
+            $this->first_name = $update->firstName;
+        }
+
+        if (isset($update->lastName)) {
+            $this->last_name = $update->lastName;
+        }
+
+        // Will be erased if present but null
+        if ($update->has('group')) {
+            $this->group = $update->group;
+        }
+
+        // Will be erased if present but null
+        if ($update->has('birthDate')) {
+            $this->birth_date = $update->birthDate;
+        }
+
+        // Will be erased if present but null
+        if ($update->has('comments')) {
+            $this->comments = $update->comments;
         }
 
         if (isset($update->scoreIncrement)) {
@@ -123,9 +147,9 @@ class Player extends BaseModel
             $this->level = $update->level;
         }
 
-		// TODO add update->board (points at the end of a game), update->quest 
+		// TODO add update->board (points at the end of a game), update->quest
         if (isset($update->teamId)) {
-
+            // Changing team is not supported yet.
         }
 
         return $events;

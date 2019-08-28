@@ -62,6 +62,9 @@ class PlayerController extends Controller
         $player->code = $create->code;
         $player->first_name = $create->firstName;
         $player->last_name = $create->lastName;
+        $player->group = $create->group;
+        $player->birth_date = $create->birthDate;
+        $player->comments = $create->comments;
         $player->level = 1;
         $player->score = 0;
         $player->team()->associate($team);
@@ -97,11 +100,13 @@ class PlayerController extends Controller
      */
     public function update(UpdatePlayerRequest $update, Player $player) {
         $events = $player->updateFromData($update);
-        return $this->persistEventsWithModel(
-            $player,
-            $events
+        $models = [$player];
+
+		//TODO: impact on team based on events generated in update (for ex. switch on event type)
+
+        return $this->persistModels(
+            array_merge($events, $models),
+            $player
         );
-		
-		//TODO: impact on team
     }
 }

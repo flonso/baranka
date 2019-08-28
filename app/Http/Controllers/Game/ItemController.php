@@ -70,9 +70,13 @@ class ItemController extends Controller
      */
     public function update(UpdateItemRequest $update, Item $item) {
         $events = $item->updateFromData($update);
-        return $this->persistEventsWithModel(
-            $item,
-            $events
+        $models = [$item];
+
+        // TODO: Impact player + team based on generated events (for ex. switch on event type)
+
+        return $this->persistModels(
+            array_merge($events, $models),
+            $item
         );
     }
 }

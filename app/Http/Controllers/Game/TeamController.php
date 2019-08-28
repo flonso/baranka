@@ -78,9 +78,11 @@ class TeamController extends Controller
      */
     public function update(UpdateTeamRequest $update, Team $team) {
         $events = $team->updateFromData($update);
-        return $this->persistEventsWithModel(
-            $team,
-            $events
+        $models = [$team];
+
+        return $this->persistModels(
+            array_merge($events, $models),
+            $team
         );
     }
 }
