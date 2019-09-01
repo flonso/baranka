@@ -21,7 +21,7 @@ class CreateInitialTables extends Migration
             $table->unsignedInteger('item_id')->nullable();
             $table->unsignedInteger('player_id')->nullable();
             $table->unsignedInteger('team_id')->nullable();
-            $table->timestamps();
+            $table->timestampsTz();
         });
 
         Schema::dropIfExists('items');
@@ -35,7 +35,7 @@ class CreateInitialTables extends Migration
             $table->double('multiplier_increment');
             $table->boolean('discovered')->default(false);
             $table->unsignedInteger('discovered_by_id')->nullable();
-            $table->timestamps();
+            $table->timestampsTz();
         });
 
         Schema::dropIfExists('players');
@@ -47,7 +47,7 @@ class CreateInitialTables extends Migration
             $table->integer('level')->default(1);
             $table->integer('score')->default(0);
             $table->unsignedInteger('team_id')->nullable();
-            $table->timestamps();
+            $table->timestampsTz();
         });
 
         Schema::dropIfExists('teams');
@@ -56,7 +56,7 @@ class CreateInitialTables extends Migration
             $table->string('name');
             $table->integer('score')->default(0);
             $table->double('score_multiplier')->default(1.0);
-            $table->timestamps();
+            $table->timestampsTz();
         });
 
         // Constraints

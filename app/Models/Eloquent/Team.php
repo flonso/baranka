@@ -57,6 +57,14 @@ class Team extends BaseModel
         return $this->belongsTo('App\Models\Eloquent\Event');
     }
 
+    public function getScoreByEventType(string $eventType) {
+        return DB::table('events')
+            ->where('type', '=', $eventType)
+            ->where('team_id', '=', $this->id)
+            ->sum('value')
+        ;
+    }
+
     public static function count() {
         return DB::table('teams')->count();
     }

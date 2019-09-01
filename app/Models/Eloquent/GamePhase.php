@@ -33,7 +33,7 @@ class GamePhase extends BaseModel
 
     public static function last() {
         $obj = DB::table('game_phases')
-            ->orderBy('start_datetime')
+            ->orderBy('start_datetime', 'desc')
             ->first();
 
         if ($obj == null) return null;

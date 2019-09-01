@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Helpers\RegexHelpers;
+use Illuminate\Validation\Rule;
 
 class CreateItemRequest extends BaseFormRequest
 {

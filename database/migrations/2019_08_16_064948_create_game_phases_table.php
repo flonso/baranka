@@ -17,9 +17,9 @@ class CreateGamePhasesTable extends Migration
         Schema::create('game_phases', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('number');
-            $table->timestamp('start_datetime');
-            $table->timestamp('end_datetime')->nullable();
-            $table->timestamps();
+            $table->dateTime('start_datetime');
+            $table->dateTime('end_datetime')->nullable();
+            $table->timestampsTz();
         });
 
         Schema::table('events', function (Blueprint $table) {

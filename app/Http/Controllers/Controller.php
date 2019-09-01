@@ -53,7 +53,7 @@ class Controller extends BaseController {
 
             foreach ($models as $model) {
                 if ($model instanceof Event) {
-                    if (issset($gamePhase)) {
+                    if (isset($gamePhase)) {
                         $model->gamePhase()->associate($gamePhase);
                     } else {
                         return $this->rollbackAndRespondWithException(

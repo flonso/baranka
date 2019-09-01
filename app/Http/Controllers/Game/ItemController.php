@@ -7,9 +7,11 @@ use App\Exceptions\GameExceptions;
 use App\Http\Requests\CreateItemRequest;
 use App\Http\Requests\UpdateItemRequest;
 use App\Models\Common\PaginationParameters;
+use App\Models\Eloquent\EventType;
 use App\Models\Eloquent\GamePhase;
 use App\Models\Eloquent\Item;
-
+use App\Models\Eloquent\ItemType;
+use App\Models\Eloquent\Team;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -63,7 +65,7 @@ class ItemController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Update the specified item.
      *
      * @param  UpdateItemRequest  $update
      * @return \Illuminate\Http\Response
@@ -72,7 +74,30 @@ class ItemController extends Controller
         $events = $item->updateFromData($update);
         $models = [$item];
 
-        // TODO: Impact player + team based on generated events (for ex. switch on event type)
+        $multiplier_incremented = false;
+
+        foreach ($events as $event) {
+            switch ($event->type) {
+                case EventType::ITEM:
+                    $team = $event->team;
+                    $player = $event->player;
+
+                    // Assuming that item value was split in multiple events (one per player)
+                    $player->score += $event->value;
+                    $team->score += $event->value;
+
+                    // Only increment multiplier once, as this is not shared between players
+                    if (!$multiplier_incremented) {
+                        $team->score_multiplier += $item->multiplier_increment;
+                        $multiplier_incremented = true;
+                    }
+
+                    $models[] = $player;
+                    $models[] = $team;
+                default:
+                    // Ignore
+            }
+        }
 
         return $this->persistModels(
             array_merge($events, $models),

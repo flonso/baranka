@@ -62,6 +62,7 @@ class Item extends BaseModel
             $this->discovery_points = $update->discoveryPoints;
         }
 
+        // FIXME: This must be handled in the same way as foundByPlayerIds
         if (isset($update->adventurePoints)) {
             // TODO: If the item was found, must query all related events in order to update the points
             $this->adventure_points = $update->adventurePoints;
@@ -72,25 +73,20 @@ class Item extends BaseModel
             $this->multiplier_increment = $update->multiplierIncrement;
         }
 
-        if (isset($update->foundByPlayerIds)) {
+        if (isset($update->foundByPlayerIds) && !$this->discovered) {
             $nbOfPlayers = count($update->foundByPlayerIds);
+            $players = Player::find($update->foundByPlayerIds);
 
-            if ($nbOfPlayers == 0) {
-                // Mark item as not found
-                // FIXME: Remove related events !
-                $this->discoveredByPlayers()->detach();
-            } else {
-                $this->discoveredByPlayers()->detach();
-                $this->discoveredByPlayers()->attach($update->foundByPlayerIds);
-                foreach ($update->foundByPlayerIds as $playerId) {
-                    $event = new Event();
-                    $event->item()->associate($this);
-                    $event->value = $this->discovery_points / $nbOfPlayers;
-                    $event->type = EventType::ITEM;
-                    $event->player()->associate($playerId);
+            $this->discoveredByPlayers()->attach($update->foundByPlayerIds);
+            foreach ($players as $player) {
+                $event = new Event();
+                $event->item()->associate($this);
+                $event->value = $this->discovery_points / $nbOfPlayers;
+                $event->type = EventType::ITEM;
+                $event->player()->associate($player);
+                $event->team()->associate($player->team_id);
 
-                    $events[] = $event;
-                }
+                $events[] = $event;
             }
         }
 
