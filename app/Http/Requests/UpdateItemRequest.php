@@ -34,6 +34,9 @@ class UpdateItemRequest extends BaseFormRequest
                 'regex:' . RegexHelpers::FLOAT_REGEX
             ],
             'foundByPlayerIds' => [
+                'array',
+            ],
+            'adventureCompletedByPlayerIds' => [
                 'array'
             ]
         ];
@@ -43,6 +46,21 @@ class UpdateItemRequest extends BaseFormRequest
         if (isset($playerIds) && is_array($playerIds)) {
             foreach ($playerIds as $key => $id) {
                 $rules["foundByPlayerIds.$key"] = [
+                    Rule::exists('players', 'id')->where(function($query) use ($id) {
+                        DB::table('players')
+                            ->where('code', '=', $id)
+                            ->orWhere('id', '=', $id)
+                        ;
+                    })
+                ];
+            }
+        }
+
+        $playerIds = $this->request->get('adventureCompletedByPlayerIds');
+
+        if (isset($playerIds) && is_array($playerIds)) {
+            foreach ($playerIds as $key => $id) {
+                $rules["adventureCompletedByPlayerIds.$key"] = [
                     Rule::exists('players', 'id')->where(function($query) use ($id) {
                         DB::table('players')
                             ->where('code', '=', $id)
@@ -69,6 +87,16 @@ class UpdateItemRequest extends BaseFormRequest
         if (isset($this->foundByPlayerIds) && is_array($this->foundByPlayerIds)) {
             foreach ($this->foundByPlayerIds as $key => $id) {
                 $messages["foundByPlayerIds.$key.exists"] = "Il n'y a pas de joueur correspondant à l'identifiant '$id'";
+            }
+        }
+
+
+        if (
+            isset($this->adventureCompletedByPlayerIds) &&
+            is_array($this->adventureCompletedByPlayerIds)
+        ) {
+            foreach ($this->adventureCompletedByPlayerIds as $key => $id) {
+                $messages["adventureCompletedByPlayerIds.$key.exists"] = "Il n'y a pas de joueur correspondant à l'identifiant '$id'";
             }
         }
 

@@ -71,10 +71,12 @@ class ItemController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(UpdateItemRequest $update, Item $item) {
+        $alreadyDiscovered = $item->discovered;
         $events = $item->updateFromData($update);
         $models = [$item];
 
-        $multiplier_incremented = false;
+        // If item already discovered, we don't re-apply the score multiplier
+        $multiplier_incremented = $alreadyDiscovered;
 
         foreach ($events as $event) {
             switch ($event->type) {

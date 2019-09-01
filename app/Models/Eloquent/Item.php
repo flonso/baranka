@@ -26,6 +26,10 @@ class Item extends BaseModel
         return $this->belongsToMany('App\Models\Eloquent\Player');
     }
 
+    public function adventureCompletedByPlayers() {
+        return $this->belongsToMany('App\Models\Eloquent\Player', 'item_adventure_player');
+    }
+
     /**
      * The events that this item has induced.
      */
@@ -35,6 +39,13 @@ class Item extends BaseModel
 
     public function getDiscoveredAttribute() {
         return $this->discoveredByPlayers != null && $this->discoveredByPlayers->count() > 0;
+    }
+
+    public function getAdventureCompletedAttribute() {
+        return (
+            $this->adventureCompletedByPlayers != null &&
+            $this->adventureCompletedByPlayers->count() > 0
+        );
     }
 
     public static function count() {
@@ -62,7 +73,6 @@ class Item extends BaseModel
             $this->discovery_points = $update->discoveryPoints;
         }
 
-        // FIXME: This must be handled in the same way as foundByPlayerIds
         if (isset($update->adventurePoints)) {
             // TODO: If the item was found, must query all related events in order to update the points
             $this->adventure_points = $update->adventurePoints;
@@ -82,6 +92,27 @@ class Item extends BaseModel
                 $event = new Event();
                 $event->item()->associate($this);
                 $event->value = $this->discovery_points / $nbOfPlayers;
+                $event->type = EventType::ITEM;
+                $event->player()->associate($player);
+                $event->team()->associate($player->team_id);
+
+                $events[] = $event;
+            }
+        }
+
+        if (
+            isset($update->adventureCompletedByPlayerIds) &&
+            !$this->adventureCompleted &&
+            $this->discovered
+        ) {
+            $nbOfPlayers = count($update->adventureCompletedByPlayerIds);
+            $players = Player::find($update->adventureCompletedByPlayerIds);
+
+            $this->discoveredByPlayers()->attach($update->adventureCompletedByPlayerIds);
+            foreach ($players as $player) {
+                $event = new Event();
+                $event->item()->associate($this);
+                $event->value = $this->adventure_points / $nbOfPlayers;
                 $event->type = EventType::ITEM;
                 $event->player()->associate($player);
                 $event->team()->associate($player->team_id);
