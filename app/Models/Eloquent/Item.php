@@ -16,7 +16,8 @@ class Item extends BaseModel
     ];
 
     protected $appends = [
-        'discovered'
+        'discovered',
+        'adventure_completed'
     ];
 
     /**
@@ -108,7 +109,7 @@ class Item extends BaseModel
             $nbOfPlayers = count($update->adventureCompletedByPlayerIds);
             $players = Player::find($update->adventureCompletedByPlayerIds);
 
-            $this->discoveredByPlayers()->attach($update->adventureCompletedByPlayerIds);
+            $this->adventureCompletedByPlayers()->attach($update->adventureCompletedByPlayerIds);
             foreach ($players as $player) {
                 $event = new Event();
                 $event->item()->associate($this);

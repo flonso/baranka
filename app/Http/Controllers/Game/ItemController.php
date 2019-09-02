@@ -28,10 +28,10 @@ class ItemController extends Controller
             intval($request->input('page'))
         );
 
-        $query = DB::table('items')
+        $query = Item::with('discoveredByPlayers')
+            ->with('adventureCompletedByPlayers')
             ->offset($params->offset)
-            ->limit($params->limit)
-        ;
+            ->limit($params->limit);
 
         return response()->json([
             'data' => $query->get(),

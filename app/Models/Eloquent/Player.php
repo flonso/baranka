@@ -20,6 +20,10 @@ class Player extends BaseModel
         return $this->belongsToMany('App\Models\Eloquent\Item');
     }
 
+    public function completedItemAdventures() {
+        return $this->belongsToMany('App\Models\Eloquent\Item', 'item_adventure_player');
+    }
+
     public function team() {
         return $this->belongsTo('App\Models\Eloquent\Team');
     }
