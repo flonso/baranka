@@ -47,7 +47,7 @@ class UpdateItemRequest extends BaseFormRequest
             foreach ($playerIds as $key => $id) {
                 $rules["foundByPlayerIds.$key"] = [
                     Rule::exists('players', 'id')->where(function($query) use ($id) {
-                        DB::table('players')
+                        return DB::table('players')
                             ->where('code', '=', $id)
                             ->orWhere('id', '=', $id)
                         ;

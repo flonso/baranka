@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreatePlayerRequest;
 use App\Http\Requests\UpdatePlayerRequest;
 use App\Models\Common\PaginationParameters;
+use App\Models\Eloquent\EventType;
 use App\Models\Eloquent\GamePhase;
 use App\Models\Eloquent\Player;
 use App\Models\Eloquent\Team;
@@ -25,12 +26,14 @@ class PlayerController extends Controller
     public function list(Request $request)
     {
         $params = new PaginationParameters(
-            intval($request->input('page'))
+            intval($request->input('page')),
+            intval($request->input('limit'))
         );
 
         $query = DB::table('players')
             ->offset($params->offset)
             ->limit($params->limit)
+            ->orderBy('last_name')
         ;
 
         return response()->json([
@@ -102,7 +105,20 @@ class PlayerController extends Controller
         $events = $player->updateFromData($update);
         $models = [$player];
 
-		//TODO: impact on team based on events generated in update (for ex. switch on event type)
+        foreach ($events as $event) {
+            $team = $event->team;
+            switch ($event->type) {
+                case EventType::LEVEL_CHANGE:
+                    $player->score += $event->value;
+                    $team->score += $event->value;
+                break;
+                case EventType::MANUAL_POINTS:
+                    // Player score is already updated, the team's isn't
+                    $team->score += $event->value;
+                break;
+            }
+            $models[] = $team;
+        }
 
         return $this->persistModels(
             array_merge($events, $models),

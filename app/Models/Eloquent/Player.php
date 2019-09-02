@@ -133,22 +133,30 @@ class Player extends BaseModel
             $event = new Event();
             $event->value = $update->scoreIncrement;
             $event->type = EventType::MANUAL_POINTS;
+            // Manual points on player impact the team as well
             $event->player()->associate($this);
+            $event->team()->associate($this->team_id);
 
             $events[] = $event;
 
             $this->score += $update->scoreIncrement;
         }
 
-        if (isset($update->level)) {
+        if (isset($update->level) || (isset($update->levelUp) && $update->levelUp)) {
+            $newLevel = $update->level ?? $this->level + 1;
+
+            $evolutionGrid = config('game.evolution_grid');
+            $scoreGain = $evolutionGrid[$newLevel] ?? 0;
+
             $event = new Event();
-            $event->value = 0;
+            $event->value = $scoreGain;
             $event->type = EventType::LEVEL_CHANGE;
             $event->player()->associate($this);
+            $event->team()->associate($this->team_id);
 
             $events[] = $event;
 
-            $this->level = $update->level;
+            $this->level = $newLevel;
         }
 
 		// TODO add update->board (points at the end of a game), update->quest
