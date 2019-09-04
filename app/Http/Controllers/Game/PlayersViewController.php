@@ -19,7 +19,7 @@ class PlayersViewController extends Controller
 {
     public function get(Request $request)
     {
-        $players = app(app / Http / Controllers / PlayerController)->list();
+        $players = app('app/Http/Controllers/PlayerController')->list();
         //pass param to view
         return view('players, $players);
     }

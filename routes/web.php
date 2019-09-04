@@ -20,9 +20,7 @@ Route::get("/game", function () {
 Route::get("/admin", function () {
     return view('admin');
 });
-Route::get("/players", function () {
-    return view('players');
-});
+Route::get("/players", 'PlayersViewController@get');
 Route::get("/objects", function () {
     return view('objects');
 });
