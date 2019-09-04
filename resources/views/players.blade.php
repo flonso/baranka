@@ -26,7 +26,11 @@
             </tr>
             </tbody>
         </table>
-        {{ $players }}
+        @forelse ($players as $player)
+            {{ $player->first_name }} {{ $player->last_name }}
+        @empty
+            <p>Pas de joueurs</p>
+        @endforelse
     </div>
 
 @endsection
