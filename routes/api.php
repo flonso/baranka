@@ -28,11 +28,12 @@ Route::patch('/players/{player}', 'PlayerController@update');
 
 Route::get('/teams', 'TeamController@list');
 Route::post('/teams', 'TeamController@create');
+Route::get('/teams/rankings', 'TeamController@rankings');
+Route::get('/teams/ranking/global', 'TeamController@globalRanking');
+Route::get('/teams/ranking/{type}', 'TeamController@rankingForCategory');
 Route::get('/teams/{team}', 'TeamController@get');
 Route::patch('/teams/{team}', 'TeamController@update');
 Route::post('/teams/{team}/players/{playerId}', 'TeamController@addPlayer');
-Route::get('/teams/ranking', 'TeamController@ranking');
-Route::get('/teams/ranking/{category}', 'TeamController@rankingForCategory');
 
 Route::get('/game/status', 'GameController@status');
 Route::post('/game/start', 'GameController@start');

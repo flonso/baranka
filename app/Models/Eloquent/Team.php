@@ -69,6 +69,35 @@ class Team extends BaseModel
         return DB::table('teams')->count();
     }
 
+    public static function getAllScoresForEventTypes(array $types) {
+        $allTeamScores = DB::table('events')
+            ->selectRaw("events.team_id, teams.name, sum(value) as score, type")
+            ->join("teams", "events.team_id", "=", "teams.id")
+            ->whereIn('type', $types)
+            ->groupBy("type", "team_id")
+            ->orderBy('score', 'desc')
+            ->get()
+        ;
+
+        $ranks = [];
+        foreach ($types as $type) {
+            $ranks[$type] = 0;
+        }
+        $rankingByCategory = [];
+        foreach ($allTeamScores as $s) {
+            $type = $s->type;
+            if (!isset($rankingByCategory[$type])) {
+                $rankingByCategory[$type] = [];
+            }
+
+            $ranks[$type] += 1; // Works because allTeamScores is sorted by descending score
+            $s->rank = $ranks[$type];
+            $rankingByCategory[$type][] = $s;
+        }
+
+        return $rankingByCategory;
+    }
+
     /**
      * Assigns the given data to the current team instance. For each field updated,
      * an event is generated so it can be stored in database.
