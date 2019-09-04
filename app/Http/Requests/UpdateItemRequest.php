@@ -33,7 +33,7 @@ class UpdateItemRequest extends BaseFormRequest
             'multiplierIncrement' => [
                 'regex:' . RegexHelpers::FLOAT_REGEX
             ],
-            'foundByPlayerIds' => [
+            'discoveredByPlayerIds' => [
                 'array',
             ],
             'adventureCompletedByPlayerIds' => [
@@ -41,11 +41,12 @@ class UpdateItemRequest extends BaseFormRequest
             ]
         ];
 
-        $playerIds = $this->request->get('foundByPlayerIds');
+        $playerIds = $this->request->get('discoveredByPlayerIds');
 
+        // TODO: This could probably be optimied into a single query
         if (isset($playerIds) && is_array($playerIds)) {
             foreach ($playerIds as $key => $id) {
-                $rules["foundByPlayerIds.$key"] = [
+                $rules["discoveredByPlayerIds.$key"] = [
                     Rule::exists('players', 'id')->where(function($query) use ($id) {
                         return DB::table('players')
                             ->where('code', '=', $id)
@@ -58,6 +59,7 @@ class UpdateItemRequest extends BaseFormRequest
 
         $playerIds = $this->request->get('adventureCompletedByPlayerIds');
 
+        // TODO: Make this into a single query ?
         if (isset($playerIds) && is_array($playerIds)) {
             foreach ($playerIds as $key => $id) {
                 $rules["adventureCompletedByPlayerIds.$key"] = [
@@ -84,9 +86,9 @@ class UpdateItemRequest extends BaseFormRequest
             'multiplierIncrement.regex' => "L'incrément du multiplicateur de score doit être un nombre entier ou décimal ('$this->multiplierIncrement' reçu)",
         ];
 
-        if (isset($this->foundByPlayerIds) && is_array($this->foundByPlayerIds)) {
-            foreach ($this->foundByPlayerIds as $key => $id) {
-                $messages["foundByPlayerIds.$key.exists"] = "Il n'y a pas de joueur correspondant à l'identifiant '$id'";
+        if (isset($this->discoveredByPlayerIds) && is_array($this->discoveredByPlayerIds)) {
+            foreach ($this->discoveredByPlayerIds as $key => $id) {
+                $messages["discoveredByPlayerIds.$key.exists"] = "Il n'y a pas de joueur correspondant à l'identifiant '$id'";
             }
         }
 

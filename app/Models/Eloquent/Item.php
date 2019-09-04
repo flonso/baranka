@@ -38,6 +38,10 @@ class Item extends BaseModel
         return $this->belongsTo('App\Models\Eloquent\Event');
     }
 
+    public function getDiscoverableAttribute() {
+        return $this->discoverable_from_phase >= GamePhase::current()->number;
+    }
+
     public function getDiscoveredAttribute() {
         return $this->discoveredByPlayers != null && $this->discoveredByPlayers->count() > 0;
     }
@@ -47,6 +51,20 @@ class Item extends BaseModel
             $this->adventureCompletedByPlayers != null &&
             $this->adventureCompletedByPlayers->count() > 0
         );
+    }
+
+    /**
+     * For each 2 phases the item is discoverable, the points
+     * decrease by 100.
+     *
+     * @return integer
+     */
+    public function getCurrentDiscoveryPointsAttribute() {
+        $currentPhaseNumber = GamePhase::current()->number;
+        $points = $this->discovery_points;
+        $points -= floor(max(0, $currentPhaseNumber - $this->discoverable_from_phase) / 2) * 100;
+
+        return $points;
     }
 
     public static function count() {
@@ -84,15 +102,15 @@ class Item extends BaseModel
             $this->multiplier_increment = $update->multiplierIncrement;
         }
 
-        if (isset($update->foundByPlayerIds) && !$this->discovered) {
-            $nbOfPlayers = count($update->foundByPlayerIds);
-            $players = Player::find($update->foundByPlayerIds);
+        if (isset($update->discoveredByPlayerIds) && !$this->discovered && $this->discoverable) {
+            $nbOfPlayers = count($update->discoveredByPlayerIds);
+            $players = Player::find($update->discoveredByPlayerIds);
 
-            $this->discoveredByPlayers()->attach($update->foundByPlayerIds);
+            $this->discoveredByPlayers()->attach($update->discoveredByPlayerIds);
             foreach ($players as $player) {
                 $event = new Event();
                 $event->item()->associate($this);
-                $event->value = $this->discovery_points / $nbOfPlayers;
+                $event->value = $this->currentDiscoveryPoints / $nbOfPlayers;
                 $event->type = EventType::ITEM;
                 $event->player()->associate($player);
                 $event->team()->associate($player->team_id);

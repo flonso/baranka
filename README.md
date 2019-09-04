@@ -28,16 +28,17 @@ PHP Requirements:
   - [x] Identify a player based on
     - [x] An id
     - [x] A code value
-  - [ ] Store additional player info
+  - [x] Store additional player info
   - [ ] Retrieve the global player ranking
 - Game phases
   - [x] Start a new game phase, possibility to give a custom phase number (to compute items' based on it)
   - [x] Stop a game phase
 - Items
-  - Create an item with name, amount of points gained for discovery, amounts of points gained with the related sidequest, starting phase for its discovery, score multiplier increase value and discovery status.
-  - [ ] Update an item's found status
-    - [ ] Distribute discovery points based on game phase and number of players to register it.
-    - [ ] Number of points should be computed as: points = basepoints * (1 - (game_phase_discovered - game_phase_discoverable)* 0.1)
+  - [x] Create an item with name, amount of points gained for discovery, amounts of points gained with the related sidequest, starting phase for its discovery, score multiplier increase value and discovery status.
+  - [x] Update an item's found status
+    - [x] Distribute discovery points based on game phase and number of players to register it.
+    - [x] Discovery points reduce by 100 for each two game phases it is possible to discover the item in
+    - [x] Distribute adventure points among player validating it
 - Events
   - [ ] Save an event for each gain/loss of points as well as who it benefits to
   - [ ] Track which user of the system has performed an action (optional)

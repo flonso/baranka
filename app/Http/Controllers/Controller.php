@@ -26,7 +26,7 @@ class Controller extends BaseController {
     public function commitAndRespondWithModel(BaseModel $model) {
         DB::commit();
 
-        return response()->json($model);
+        return response()->json($model->fresh());
     }
 
     /**

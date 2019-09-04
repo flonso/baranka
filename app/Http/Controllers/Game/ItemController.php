@@ -25,7 +25,8 @@ class ItemController extends Controller
      */
     public function list(Request $request) {
         $params = new PaginationParameters(
-            intval($request->input('page'))
+            intval($request->input('page')),
+            intval($request->input('limit'))
         );
 
         $query = Item::with('discoveredByPlayers')
@@ -48,6 +49,7 @@ class ItemController extends Controller
         $item = new Item();
         $item->name = $create->name;
         $item->certificate_number = $create->certificateNumber;
+        $item->discoverable_from_phase = $create->discoverableFromPhase;
         $item->discovery_points = $create->discoveryPoints;
         $item->adventure_points = $create->adventurePoints;
         $item->multiplier_increment = $create->multiplierIncrement ?? 0;
@@ -78,10 +80,13 @@ class ItemController extends Controller
         // If item already discovered, we don't re-apply the score multiplier
         $multiplier_incremented = $alreadyDiscovered;
 
+        // FIXME: If the same player is referenced in two different events, only the second update
+        // will get applied. (Use a map from model-type-id to the already updated model to stack updates)
+        $team = null;
         foreach ($events as $event) {
             switch ($event->type) {
                 case EventType::ITEM:
-                    $team = $event->team;
+                    $team = $team ?? $event->team;
                     $player = $event->player;
 
                     // Assuming that item value was split in multiple events (one per player)
