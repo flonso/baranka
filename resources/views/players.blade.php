@@ -26,6 +26,7 @@
             </tr>
             </tbody>
         </table>
+        {{ $players }}
     </div>
 
 @endsection
