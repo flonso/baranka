@@ -10,6 +10,7 @@ use App\Models\Common\PaginationParameters;
 use App\Exceptions\GameExceptions;
 use App\Http\Requests\CreateTeamRequest;
 use App\Http\Requests\UpdateTeamRequest;
+use App\Models\Eloquent\EventType;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -83,6 +84,90 @@ class TeamController extends Controller
         return $this->persistModels(
             array_merge($events, $models),
             $team
+        );
+    }
+
+    /**
+     * Returns the ranking for each category of event in the game.
+     */
+    public function rankings(Request $request) {
+        $eventTypes =  [
+            EventType::ITEM,
+            EventType::LEVEL_CHANGE,
+            EventType::QUEST,
+            EventType::BOARD
+        ];
+        $rankings = Team::getAllScoresForEventTypes(
+            $eventTypes
+        );
+
+        return response()->json($rankings);
+    }
+
+    /**
+     * Returns the final ranking for the game. This takes into account individual ranks
+     * in each event category, applies manual points and finally applies each team's score
+     * multiplier.
+     *
+     * Use this to know who is winning.
+     */
+    public function globalRanking(Request $request) {
+        $eventTypes =  [
+            EventType::ITEM,
+            EventType::LEVEL_CHANGE,
+            EventType::QUEST,
+            EventType::BOARD
+        ];
+        $rankings = Team::getAllScoresForEventTypes(
+            $eventTypes
+        );
+
+        // Assign points based on rank for each event type
+        $finalScoresByTeam = [];
+        foreach ($rankings as $rank) {
+            foreach ($rank as $score) {
+                $teamId = $score->team_id;
+                if (!isset($finalScoresByTeam[$teamId])) {
+                    $finalScoresByTeam[$teamId] = 0;
+                }
+
+                $finalScoresByTeam[$teamId] += 1000 - ($score->rank - 1) * 200;
+            }
+        }
+
+
+        $teams = Team::find(array_keys($finalScoresByTeam));
+        $teamsById = [];
+        foreach ($teams as $team) {
+            $teamsById[$team->id] = $team;
+        }
+
+        // Assign rank + final score to each team
+        $ranks = range(1, count($finalScoresByTeam));
+        $finalScoresByTeam = array_sort($finalScoresByTeam, function($score) { return -$score; });
+        $teamsWithScores = array_map(function($score, $teamId) use ($teamsById) {
+            $team = $teamsById[$teamId];
+            $manualPoints = $team->getScoreByEventType(EventType::MANUAL_POINTS);
+            $team->score = ($score + $manualPoints) * $team->score_multiplier;
+            return $team;
+        }, $finalScoresByTeam, array_keys($finalScoresByTeam));
+
+        $teamsWithScoresAndRanks = array_map(function($team, $rank) {
+            $team->rank = $rank;
+            return $team;
+        }, $teamsWithScores, $ranks);
+
+        return response()->json($teamsWithScoresAndRanks);
+    }
+
+    /**
+     * Returns the rankinf of each team for a given event type.
+     */
+    public function rankingForCategory(Request $request, $type) {
+        $teamScoresByCategory = Team::getAllScoresForEventTypes([$type]);
+
+        return response()->json(
+            $teamScoresByCategory[$type]
         );
     }
 }

@@ -39,6 +39,10 @@ PHP Requirements:
     - [x] Distribute discovery points based on game phase and number of players to register it.
     - [x] Discovery points reduce by 100 for each two game phases it is possible to discover the item in
     - [x] Distribute adventure points among player validating it
+- Board game
+  - [ ] Be able to register points gained in the board game category
+- Quests
+  - [ ] Be able to register points gained in quests
 - Events
   - [ ] Save an event for each gain/loss of points as well as who it benefits to
   - [ ] Track which user of the system has performed an action (optional)
