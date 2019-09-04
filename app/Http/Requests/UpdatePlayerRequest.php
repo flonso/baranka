@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Helpers\RegexHelpers;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class UpdatePlayerRequest extends BaseFormRequest
@@ -13,6 +14,7 @@ class UpdatePlayerRequest extends BaseFormRequest
      * @return array
      */
     public function rules() {
+        $maxLevel = config('game.max_level');
         return [
             'code' => [
                 'min:1',
@@ -22,9 +24,13 @@ class UpdatePlayerRequest extends BaseFormRequest
             'scoreIncrement' => [
                 'integer'
             ],
+            'levelUp' => [
+                'boolean'
+            ],
             'level' => [
                 'digits_between:1,2',
                 'min:1',
+                'lte:' . config('game.max_level', 0)
             ],
             'firstName' => [
                 'filled',
@@ -52,8 +58,24 @@ class UpdatePlayerRequest extends BaseFormRequest
         ];
     }
 
+    /**
+     * Configure the validator instance.
+     *
+     * @param  \Illuminate\Validation\Validator  $validator
+     * @return void
+     */
+    public function withValidator($validator) {
+        $player = $this->route('player');
+        $validator->after(function($validator) use ($player) {
+            if ($player->level == config('game.max_level') && $this->has('levelUp')) {
+                $validator->errors()->add('levelUp', "Le niveau maximum a été atteint (niveau actuel $player->level)");
+            }
+        });
+    }
+
     public function messages() {
         return [
+            'level.lt' => "Le niveau doit être inférieur ou égal à 6 ('$this->level' reçu)",
             'code.min' => "Le code ne doit pas être vide.",
             'code.max' => "Le code ne doit pas excéder 250 caractères",
             'code.unique' => "Le code '$this->code' indiqué est déjà utilisé.",

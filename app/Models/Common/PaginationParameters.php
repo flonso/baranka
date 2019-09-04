@@ -13,11 +13,12 @@ class PaginationParameters {
         'limit' => 100
     ];
 
-    function __construct(int $page) {
+    function __construct(int $page, int $limit = null) {
         if ($page <= 0) $page = null;
+        if ($limit <= 0) $limit = null;
 
         $this->page = $page ?? $this->defaults['page'];
-        $this->limit = $this->defaults['limit'];
+        $this->limit = $limit ?? $this->defaults['limit'];
         $this->offset = ($this->page - 1) * $this->limit;
     }
 }
