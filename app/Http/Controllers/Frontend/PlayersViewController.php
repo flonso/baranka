@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\ApiExceptions;
 use App\Exceptions\GameExceptions;
+use App\Helpers\HttpHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreatePlayerRequest;
 use App\Http\Requests\UpdatePlayerRequest;
@@ -20,20 +21,12 @@ class PlayersViewController extends Controller
 {
     public function get(Request $request)
     {
-        /**
-         * To use guzzle you need to have two instances of php artisan serve running.
-         * In this example :8000 is used for the API and the other instance for the frontend testing.
-         * See: https://stackoverflow.com/questions/48841018/guzzle-cannot-make-get-request-to-the-localhost-port-80-8000-8080-etc/57573002#57573002
-         */
-        $client = new Client([
-            'base_uri' => 'http://localhost:8000'
-        ]);
+        $uri = action('PlayerController@list', ['page' => 1, 'limit' => 10000], false);
 
-        $res = $client->request('GET', '/api/players');
-
-        $response = json_decode($res->getBody()->getContents());
-        $players = $response->data;
-        $totalPlayers = $response->count;
+        $response = HttpHelpers::get($uri);
+        $json = HttpHelpers::bodyToJson($response);
+        $players = $json->data;
+        $totalPlayers = $json->count;
 
         //pass param to view
         return view('players', ["players" => $players, 'totalPlayers' => $totalPlayers]);

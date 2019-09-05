@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Game;
+namespace App\Http\Controllers;
 
 use App\Models\Eloquent\Event;
 use Illuminate\Http\Request;

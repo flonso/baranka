@@ -17,20 +17,26 @@
             <thead>
             <tr>
                 <th scope="col">#</th>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th>Score</th>
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-            </tr>
+            @forelse ($players as $player)
+                <tr>
+                    <th scope="row">
+                    <td>{{ $player->first_name }}</td>
+                    <td>{{ $player->last_name }}</td>
+                    <td>{{ $player->score }}</td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="4">Il n'y a pas de joueurs</td>
+                </tr>
+            @endforelse
             </tbody>
         </table>
-        @forelse ($players as $player)
-            {{ $player->first_name }} {{ $player->last_name }}
-        @empty
-            <p>Pas de joueurs</p>
-        @endforelse
     </div>
 
 @endsection
