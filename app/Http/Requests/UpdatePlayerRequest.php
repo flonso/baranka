@@ -14,7 +14,6 @@ class UpdatePlayerRequest extends BaseFormRequest
      * @return array
      */
     public function rules() {
-        $maxLevel = config('game.max_level');
         return [
             'code' => [
                 'min:1',
@@ -23,6 +22,12 @@ class UpdatePlayerRequest extends BaseFormRequest
             ],
             'scoreIncrement' => [
                 'integer'
+            ],
+            'gainedQuestPoints' => [
+                'regex:' . RegexHelpers::FLOAT_REGEX
+            ],
+            'gainedBoardPoints' => [
+                'regex:' . RegexHelpers::FLOAT_REGEX
             ],
             'levelUp' => [
                 'boolean'
@@ -66,8 +71,10 @@ class UpdatePlayerRequest extends BaseFormRequest
      */
     public function withValidator($validator) {
         $player = $this->route('player');
-        $validator->after(function($validator) use ($player) {
-            if ($player->level == config('game.max_level') && $this->has('levelUp')) {
+        $maxLevel = config('game.max_level');
+
+        $validator->after(function($validator) use ($player, $maxLevel) {
+            if ($player->level == $maxLevel && $this->has('levelUp')) {
                 $validator->errors()->add('levelUp', "Le niveau maximum a été atteint (niveau actuel $player->level)");
             }
         });
