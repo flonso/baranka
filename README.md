@@ -46,9 +46,9 @@ PHP Requirements:
 - Events
   - [ ] Save an event for each gain/loss of points as well as who it benefits to
   - [ ] Track which user of the system has performed an action (optional)
-  - [ ] Compute rankings per event category
-- [ ] Custom value settings
-  - [ ] Configure value used for computations (such as score, item loss of value, ...)
+  - [x] Compute rankings per event category
+- [x] Custom value settings
+  - [x] Configure value used for computations (such as score, item loss of value, ...)
 
 
 

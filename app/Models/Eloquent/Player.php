@@ -130,16 +130,28 @@ class Player extends BaseModel
         }
 
         if (isset($update->scoreIncrement)) {
-            $event = new Event();
-            $event->value = $update->scoreIncrement;
-            $event->type = EventType::MANUAL_POINTS;
-            // Manual points on player impact the team as well
-            $event->player()->associate($this);
-            $event->team()->associate($this->team_id);
-
-            $events[] = $event;
+            $events[] = $this->buildEvent(
+                $update->scoreIncrement,
+                EventType::MANUAL_POINTS
+            );
 
             $this->score += $update->scoreIncrement;
+        }
+
+        if (isset($update->gainedQuestPoints)) {
+            $events[] = $this->buildEvent(
+                $update->gainedQuestPoints,
+                EventType::QUEST
+            );
+            $this->score += $update->gainedQuestPoints;
+        }
+
+        if (isset($update->gainedBoardPoints)) {
+            $events[] = $this->buildEvent(
+                $update->gainedBoardPoints,
+                EventType::BOARD
+            );
+            $this->score += $update->gainedBoardPoints;
         }
 
         if (isset($update->level) || (isset($update->levelUp) && $update->levelUp)) {
@@ -148,22 +160,27 @@ class Player extends BaseModel
             $evolutionGrid = config('game.evolution_grid');
             $scoreGain = $evolutionGrid[$newLevel] ?? 0;
 
-            $event = new Event();
-            $event->value = $scoreGain;
-            $event->type = EventType::LEVEL_CHANGE;
-            $event->player()->associate($this);
-            $event->team()->associate($this->team_id);
-
-            $events[] = $event;
+            $events[] = $this->buildEvent(
+                $scoreGain,
+                EventType::LEVEL_CHANGE
+            );
 
             $this->level = $newLevel;
         }
 
-		// TODO add update->board (points at the end of a game), update->quest
         if (isset($update->teamId)) {
             // Changing team is not supported yet.
         }
 
         return $events;
+    }
+
+    private function buildEvent($value, $type) {
+        return Event::build(
+            $value,
+            $type,
+            $this->id,
+            $this->team_id
+        );
     }
 }

@@ -113,9 +113,14 @@ class PlayerController extends Controller
                     $team->score += $event->value;
                 break;
                 case EventType::MANUAL_POINTS:
+                case EventType::QUEST:
+                case EventType::BOARD:
                     // Player score is already updated, the team's isn't
                     $team->score += $event->value;
                 break;
+                default:
+                    // Skipped
+
             }
             $models[] = $team;
         }
