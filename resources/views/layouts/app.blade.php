@@ -27,7 +27,9 @@
 		<div class="container">
 			@yield('content')
 		</div>
-		<script src="js/app.js" charset="utf-8"></script>
+		@section('scripts')
+			<script src="js/app.js" charset="utf-8"></script>
+		@show
 	</body>
 </html>
 

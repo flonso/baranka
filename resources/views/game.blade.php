@@ -9,7 +9,7 @@
 @section('content')
 	<div class="row">
 		<div class="col">
-			<button type="button" class="btn btn-block btn-primary">
+			<button type="button" class="btn btn-block btn-primary" id="mommand-lou">
 				Entrer les points d'une partie de Momand'lou
 			</button>
 		</div>
@@ -67,4 +67,25 @@
 		</div>
 	</div>
 
+	<div id="mommand-lou-form" title="Mommand'lou">
+		<form>
+			<div class="form-group">
+				<label for="playerId">Identifiant du joueur</label>
+				<input type="text" class="form-control" id="playerId" aria-describedby="playerIdHelp" placeholder="Entrez l'identifiant du joueur">
+				<small id="playerIdHelp" class="form-text text-muted">Utilisez le bracelet du joueur.</small>
+			</div>
+			<div class="form-group">
+				<label for="pointsGained">Points gagnés</label>
+				<input type="text" class="form-control" id="pointsGained" placeholder="Points gagnés" aria-describedby="pointsGainedHelp">
+				<small id="pointsGainedHelp" class="form-text text-muted">Entrez un nombre par ex. 35</small>
+			</div>
+		</form>
+	</div>
+@endsection
+
+@section('scripts')
+	@parent
+	<script>
+		game.bindButtons();
+	</script>
 @endsection
