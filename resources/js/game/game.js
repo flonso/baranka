@@ -3,6 +3,7 @@
  */
 
 import 'jquery-ui/ui/widgets/dialog.js';
+import Axios from 'axios';
 
 function buildDialog(containerId, callback) {
   const container = $(`#${containerId}`)
@@ -28,12 +29,25 @@ function buildDialog(containerId, callback) {
 
 export function bindButtons() {
   const mommandLouDialog = buildDialog('mommand-lou-form', (dialog) => {
+
     const form = $('#mommand-lou-form').find('form')
     const playerId = form.find('#playerId').val()
     const pointsGained = form.find('#pointsGained').val()
 
-    alert(`Le joueur ${playerId} gagne ${pointsGained}`)
-    dialog.dialog("close")
+    if (typeof playerId === undefined || typeof pointsGained === undefined) {
+      // Display error message
+    }
+
+    Axios.patch(
+      `/api/players/${playerId}`,
+      {
+        "gainedBoardPoints": pointsGained
+      }
+    ).then((response) => {
+      dialog.dialog("close")
+    }, (response) => {
+      alert(response)
+    });
   })
 
   $('#mommand-lou').click(() => {

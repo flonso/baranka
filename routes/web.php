@@ -21,6 +21,4 @@ Route::get("/admin", function () {
     return view('admin');
 });
 Route::get("/players", 'PlayersViewController@get');
-Route::get("/objects", function () {
-    return view('objects');
-});
+Route::get("/items", 'ItemsViewController@get');

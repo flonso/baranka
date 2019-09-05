@@ -43742,9 +43742,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bindButtons", function() { return bindButtons; });
 /* harmony import */ var jquery_ui_ui_widgets_dialog_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery-ui/ui/widgets/dialog.js */ "./node_modules/jquery-ui/ui/widgets/dialog.js");
 /* harmony import */ var jquery_ui_ui_widgets_dialog_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery_ui_ui_widgets_dialog_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 /**
  * Definitions of functions used in game.blade.php
  */
+
 
 
 function buildDialog(containerId, callback) {
@@ -43774,8 +43779,17 @@ function bindButtons() {
     var form = $('#mommand-lou-form').find('form');
     var playerId = form.find('#playerId').val();
     var pointsGained = form.find('#pointsGained').val();
-    alert("Le joueur ".concat(playerId, " gagne ").concat(pointsGained));
-    dialog.dialog("close");
+
+    if (_typeof(playerId) === undefined || _typeof(pointsGained) === undefined) {// Display error message
+    }
+
+    axios__WEBPACK_IMPORTED_MODULE_1___default.a.patch("/api/players/".concat(playerId), {
+      "gainedBoardPoints": pointsGained
+    }).then(function (response) {
+      dialog.dialog("close");
+    }, function (response) {
+      alert(response);
+    });
   });
   $('#mommand-lou').click(function () {
     mommandLouDialog.dialog("open");

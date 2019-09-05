@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Joueurs')
+@section('title', 'Objets')
 
 @section('sidebar')
 	@parent
@@ -8,29 +8,29 @@
 
 @section('content')
     <div class="row">
-        <h1>Joueurs</h1>
+        <h1>Objets</h1>
     </div>
 	<div class="row">
         <table class="table table-striped">
             <thead>
             <tr>
                 <th scope="col">#</th>
-                <th>Prénom</th>
                 <th>Nom</th>
-                <th>Score</th>
+                <th>Points de découverte</th>
+                <th>Points d'aventure</th>
             </tr>
             </thead>
             <tbody>
             @forelse ($players as $player)
                 <tr>
                     <th scope="row">
-                    <td>{{ $player->first_name }}</td>
-                    <td>{{ $player->last_name }}</td>
-                    <td>{{ $player->score }}</td>
+                    <td>{{ $player->name }}</td>
+                    <td>{{ $player->discovery_points }}</td>
+                    <td>{{ $player->adventure_points }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="4">Il n'y a pas de joueurs</td>
+                    <td colspan="4">Il n'y a pas d'objets</td>
                 </tr>
             @endforelse
             </tbody>
