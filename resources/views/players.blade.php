@@ -23,7 +23,7 @@
             <tbody>
             @forelse ($players as $player)
                 <tr>
-                    <th scope="row">
+                    <th scope="row">{{ $player->code ?? $player->id }}</th>
                     <td>{{ $player->first_name }}</td>
                     <td>{{ $player->last_name }}</td>
                     <td>{{ $player->score }}</td>

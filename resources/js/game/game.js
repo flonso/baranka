@@ -1,36 +1,27 @@
 /**
  * Definitions of functions used in game.blade.php
  */
-
-import 'jquery-ui/ui/widgets/dialog.js';
 import Axios from 'axios';
 
-function buildDialog(containerId, callback) {
-  const container = $(`#${containerId}`)
-  const dialog = container.dialog({
-      autoOpen: false,
-      modal: true,
-      buttons: {
-          "Valider": () => callback(dialog),
-          "Annuler": () => dialog.dialog("close")
-      },
-      close: () => {
+function bindFormSubmit(containerId, onSubmitCallback) {
+  const modal = $(`#${containerId}`)
+  const form = modal.find('.modal-body form')
 
-      }
+  const submitButton = modal.find('.modal-footer button:not([data-dismiss])')
+  console.log(submitButton, modal)
+
+  submitButton.click(() => {
+    form.submit()
   })
 
-  container.find('form').submit((event) => {
+  form.submit((event) => {
     event.preventDefault()
-    callback(dialog)
+    onSubmitCallback(modal, form)
   })
-
-  return dialog
 }
 
-export function bindButtons() {
-  const mommandLouDialog = buildDialog('mommand-lou-form', (dialog) => {
-
-    const form = $('#mommand-lou-form').find('form')
+function bindMommandLou() {
+  bindFormSubmit('mommandLouModal', (modal, form) => {
     const playerId = form.find('#playerId').val()
     const pointsGained = form.find('#pointsGained').val()
 
@@ -44,13 +35,13 @@ export function bindButtons() {
         "gainedBoardPoints": pointsGained
       }
     ).then((response) => {
-      dialog.dialog("close")
+      modal.modal('hide')
     }, (response) => {
       alert(response)
     });
-  })
+  });
+}
 
-  $('#mommand-lou').click(() => {
-    mommandLouDialog.dialog("open")
-  })
+export function bindActions() {
+  bindMommandLou()
 }
