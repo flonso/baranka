@@ -108,36 +108,8 @@
 		</div>
 	</div>
 
-	<div class="modal fade" id="mommandLouModal" tabindex="-1" role="dialog" aria-labelledby="mommandLouLabel" aria-hidden="true">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="mommandLouLabel">Mommand'lou</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<form>
-						<div class="form-group">
-							<label for="playerId">Identifiant du joueur</label>
-							<input type="text" class="form-control" id="playerId" aria-describedby="playerIdHelp" placeholder="Entrez l'identifiant du joueur">
-							<small id="playerIdHelp" class="form-text text-muted">Utilisez le bracelet du joueur.</small>
-						</div>
-						<div class="form-group">
-							<label for="pointsGained">Points gagnés</label>
-							<input type="text" class="form-control" id="pointsGained" placeholder="Points gagnés" aria-describedby="pointsGainedHelp">
-							<small id="pointsGainedHelp" class="form-text text-muted">Entrez un nombre par ex. 35</small>
-						</div>
-					</form>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-					<button type="button" class="btn btn-primary">Valider</button>
-				</div>
-			</div>
-		</div>
-	</div>
+	@component('modals/mommand-lou-modal') @endcomponent
+	@component('modals/discovered-item-modal') @endcomponent
 @endsection
 
 @section('scripts')

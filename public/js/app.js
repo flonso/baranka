@@ -37053,6 +37053,28 @@ function bindMommandLou() {
   });
 }
 
+function bindDiscoveredItem() {
+  bindFormSubmit('discoveredItemModal', function (modal, form) {// TODO
+  });
+  $('#discoveredItemModal .item-select').select2({
+    placeholder: "Choisissez un objet",
+    minimumInputLength: 1,
+    ajax: {
+      url: '/items',
+      dataType: 'json',
+      data: function data(params) {
+        return {};
+      },
+      processResults: function processResults(data) {
+        return {
+          results: data.data
+        };
+      },
+      cache: false
+    }
+  });
+}
+
 function bindActions() {
   bindMommandLou();
 }

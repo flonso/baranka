@@ -19,7 +19,7 @@ class HttpHelpers {
    * @var \GuzzleHttp\Client
    */
   private static $client = null;
-  private const BASE_URI = 'http://localhost:8000/';
+  private const BASE_URI = 'http://192.168.1.65:8000/';
 
   public static function get($path) {
     $client = self::getClient();
