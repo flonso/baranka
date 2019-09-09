@@ -7,8 +7,14 @@
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
 
+@import '~select2/dist/css/select2.min.css';
+
 
 // Custom CSS
 .row {
   margin-bottom: 10px;
+}
+
+span.select2 {
+  width: 100%;
 }

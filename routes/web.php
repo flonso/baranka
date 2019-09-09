@@ -11,9 +11,8 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', '/game', 301);
+
 Route::get("/game", function () {
     return view('game');
 });

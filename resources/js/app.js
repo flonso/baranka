@@ -6,6 +6,7 @@
 
 require('./bootstrap');
 
+require('select2')
 import * as game from './game/game';
 
 window.game = game;

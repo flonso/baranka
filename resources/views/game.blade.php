@@ -23,13 +23,12 @@
 				type="button"
 				class="btn btn-block btn-primary"
 				data-toggle="modal"
-				data-target="#discoveredCertificateModal"
+				data-target="#discoveredItemModal"
 			>
 				Enregistrer un certificat de découverte
 			</button>
 		</div>
 		<div class="col">
-
 		<button
 				type="button"
 				class="btn btn-block btn-primary"
@@ -68,6 +67,14 @@
 			</button>
 		</div>
 		<div class="col">
+			<button
+				type="button"
+				class="btn btn-block btn-primary"
+				data-toggle="modal"
+				data-target="#changePlayerCode"
+			>
+				Enregistrer le bracelet d'un joueur
+			</button>
 		</div>
 		<div class="col">
 		</div>

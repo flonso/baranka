@@ -3,15 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\ApiExceptions;
-use App\Exceptions\GameExceptions;
 use App\Http\Requests\CreateItemRequest;
 use App\Http\Requests\UpdateItemRequest;
 use App\Models\Common\PaginationParameters;
 use App\Models\Eloquent\EventType;
-use App\Models\Eloquent\GamePhase;
 use App\Models\Eloquent\Item;
-use App\Models\Eloquent\ItemType;
-use App\Models\Eloquent\Team;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -24,13 +20,17 @@ class ItemController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function list(Request $request) {
+        $query = $request->input('query');
+
         $params = new PaginationParameters(
             intval($request->input('page')),
             intval($request->input('limit'))
         );
 
+        DB::enableQueryLog();
         $query = Item::with('discoveredByPlayers')
             ->with('adventureCompletedByPlayers')
+            ->where('name', 'like', "%$query%")
             ->offset($params->offset)
             ->limit($params->limit);
 

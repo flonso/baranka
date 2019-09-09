@@ -36,29 +36,48 @@ function bindMommandLou() {
       }
     ).then((response) => {
       modal.modal('hide')
-    }, (response) => {
-      alert(response)
+    }, (error) => {
+      alert(error)
     });
   });
 }
 
 function bindDiscoveredItem() {
+  console.log('binding')
   bindFormSubmit('discoveredItemModal', (modal, form) => {
-    // TODO
+    const itemId = form.find('#itemId').val()
+    const playerIds = form.find('#playerIds').val().split('\n')
+
+    Axios.patch(
+      `api/items/${itemId}`,
+      {
+        "discoveredByPlayerIds": playerIds
+      }
+    ).then((response) => {
+      modal.modal('hide')
+    }, (error) => {
+      alert(error)
+    })
   })
 
-  $('#discoveredItemModal .item-select').select2({
+  $('#discoveredItemModal select#itemId').select2({
     placeholder: "Choisissez un objet",
-    minimumInputLength: 1,
     ajax: {
-      url: '/items',
+      url: '/api/items',
       dataType: 'json',
       data: (params) => {
-        return {};
+        return {
+          query: params.term
+        }
       },
       processResults: (data) => {
+        const processed = $.map(data.data, (item) => {
+          item.text = item.name
+
+          return item
+        })
         return {
-          results: data.data
+          results: processed
         }
       },
       cache: false
@@ -68,4 +87,5 @@ function bindDiscoveredItem() {
 
 export function bindActions() {
   bindMommandLou()
+  bindDiscoveredItem()
 }

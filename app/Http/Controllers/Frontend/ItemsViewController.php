@@ -10,7 +10,7 @@ class ItemsViewController extends Controller
 {
     public function get(Request $request)
     {
-        $uri = action('ItemController@list', ['page' => 1, 'limit' => 10000], false);
+        $uri = action('ItemController@list', ['page' => 1, 'limit' => 1000], false);
 
         $response = HttpHelpers::get($uri);
         $json = HttpHelpers::bodyToJson($response);

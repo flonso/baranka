@@ -19,7 +19,6 @@ class HttpHelpers {
    * @var \GuzzleHttp\Client
    */
   private static $client = null;
-  private const BASE_URI = 'http://192.168.1.65:8000/';
 
   public static function get($path) {
     $client = self::getClient();
@@ -57,10 +56,14 @@ class HttpHelpers {
   public static function getClient() {
     if (self::$client == null) {
       self::$client = new Client([
-        'base_uri' => self::BASE_URI
+        'base_uri' => self::getBaseUri()
       ]);
     }
 
     return self::$client;
+  }
+
+  public static function getBaseUri() {
+    return "http://" . $_SERVER['SERVER_ADDR'] . ":" . env('API_PORT', $_SERVER['SERVER_PORT']);
   }
 }
