@@ -1,10 +1,10 @@
 @component('modals/modal')
   @slot('modalId')
-    discoveredItemModal
+    adventureCompletedModal
   @endslot
 
   @slot('title')
-    Enregistrer un certificat de découverte d'objet
+    Enregistrer un certificat d'acheminement d'objet
   @endslot
 
 
