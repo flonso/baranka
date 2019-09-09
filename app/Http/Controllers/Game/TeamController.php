@@ -131,6 +131,7 @@ class TeamController extends Controller
                     $finalScoresByTeam[$teamId] = 0;
                 }
 
+
                 $finalScoresByTeam[$teamId] += 1000 - ($score->rank - 1) * 200;
             }
         }
