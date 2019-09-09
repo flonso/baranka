@@ -43085,21 +43085,9 @@ function bindMommandLou() {
   });
 }
 
-function bindDiscoveredItem() {
-  console.log('binding');
-  bindFormSubmit('discoveredItemModal', function (modal, form) {
-    var itemId = form.find('#itemId').val();
-    var playerIds = form.find('#playerIds').val().split('\n');
-    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/items/".concat(itemId), {
-      "discoveredByPlayerIds": playerIds
-    }).then(function (response) {
-      modal.modal('hide');
-    }, function (error) {
-      alert(error);
-    });
-  });
-  $('#discoveredItemModal select#itemId').select2({
-    placeholder: "Choisissez un objet",
+function bindItemSelect2(selector) {
+  $(selector).select2({
+    placeholder: "Chercher un objet",
     ajax: {
       url: '/api/items',
       dataType: 'json',
@@ -43120,6 +43108,22 @@ function bindDiscoveredItem() {
       cache: false
     }
   });
+}
+
+function bindDiscoveredItem() {
+  console.log('binding');
+  bindFormSubmit('discoveredItemModal', function (modal, form) {
+    var itemId = form.find('#itemId').val();
+    var playerIds = form.find('#playerIds').val().split('\n');
+    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/items/".concat(itemId), {
+      "discoveredByPlayerIds": playerIds
+    }).then(function (response) {
+      modal.modal('hide');
+    }, function (error) {
+      alert(error);
+    });
+  });
+  bindItemSelect2('#discoveredItemModal select.select-item-id');
 }
 
 function bindActions() {

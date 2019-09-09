@@ -42,26 +42,9 @@ function bindMommandLou() {
   });
 }
 
-function bindDiscoveredItem() {
-  console.log('binding')
-  bindFormSubmit('discoveredItemModal', (modal, form) => {
-    const itemId = form.find('#itemId').val()
-    const playerIds = form.find('#playerIds').val().split('\n')
-
-    Axios.patch(
-      `api/items/${itemId}`,
-      {
-        "discoveredByPlayerIds": playerIds
-      }
-    ).then((response) => {
-      modal.modal('hide')
-    }, (error) => {
-      alert(error)
-    })
-  })
-
-  $('#discoveredItemModal select#itemId').select2({
-    placeholder: "Choisissez un objet",
+function bindItemSelect2(selector) {
+  $(selector).select2({
+    placeholder: "Chercher un objet",
     ajax: {
       url: '/api/items',
       dataType: 'json',
@@ -83,6 +66,27 @@ function bindDiscoveredItem() {
       cache: false
     }
   })
+}
+
+function bindDiscoveredItem() {
+  console.log('binding')
+  bindFormSubmit('discoveredItemModal', (modal, form) => {
+    const itemId = form.find('#itemId').val()
+    const playerIds = form.find('#playerIds').val().split('\n')
+
+    Axios.patch(
+      `api/items/${itemId}`,
+      {
+        "discoveredByPlayerIds": playerIds
+      }
+    ).then((response) => {
+      modal.modal('hide')
+    }, (error) => {
+      alert(error)
+    })
+  })
+
+  bindItemSelect2('#discoveredItemModal select.select-item-id')
 }
 
 export function bindActions() {

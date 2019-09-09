@@ -9,9 +9,7 @@
 
 
   <form>
-    <div class="form-group">
-      <select id="itemId"></select>
-    </div>
+    @component('helpers/item-select') @endcomponent
     <div class="form-group">
       <label for="playerIds">Identifiants des joueurs</label>
       <textarea class="form-control" id="playerIds" placeholder="Un identifiant par ligne" aria-describedby="playerIdsHelp"></textarea>
