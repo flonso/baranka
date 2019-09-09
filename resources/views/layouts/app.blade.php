@@ -14,12 +14,12 @@
     </head>
     <body>
 		@section('sidebar')
-			<nav id="sidebar-nav">
-				<ul class="nav nav-pills nav-stacked">
-					<li><a href="{{ url('game') }}">Jeu</a></li>
-					<li><a href="{{ url('players') }}">Joueurs</a></li>
-					<li><a href="{{ url('objects') }}">Objets</a></li>
-					<li><a href="{{ url('admin') }}">Admin</a></li>
+			<nav class="navbar navbar-dark bg-dark justify-content-md-center navbar-expand-sm">
+				<ul class="navbar-nav">
+			 		<li class="nav-item"><a class="nav-link" href="{{ url('game') }}">Jeu</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{ url('players') }}">Joueurs</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{ url('objects') }}">Objets</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{ url('admin') }}">Admin</a></li>
 				</ul>
 			</nav>
 		@show
