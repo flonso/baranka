@@ -69,11 +69,11 @@ class HttpHelpers {
       (isset($_SERVER['SERVER_ADDR'])) ? $_SERVER['SERVER_ADDR'] : 'localhost'
     );
 
-    $pot = env(
+    $port = env(
       'API_PORT',
       (isset($_SERVER['SERVER_PORT'])) ? $_SERVER['SERVER_PORT'] : '8000'
     );
 
-    return "http://" . $_SERVER['SERVER_ADDR'] . ":" . env('API_PORT', $_SERVER['SERVER_PORT']);
+    return "http://$addr:$port";
   }
 }
