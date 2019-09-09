@@ -27,16 +27,20 @@ class ItemController extends Controller
             intval($request->input('limit'))
         );
 
-        DB::enableQueryLog();
-        $query = Item::with('discoveredByPlayers')
+        $items = Item::with('discoveredByPlayers')
             ->with('adventureCompletedByPlayers')
             ->where('name', 'like', "%$query%")
             ->offset($params->offset)
             ->limit($params->limit);
 
+        $count = Item::with('discoveredByPlayers')
+        ->with('adventureCompletedByPlayers')
+        ->where('name', 'like', "%$query%")
+        ->count();
+
         return response()->json([
-            'data' => $query->get(),
-            'count' => Item::count()
+            'data' => $items->get(),
+            'count' => $count
         ]);
     }
 

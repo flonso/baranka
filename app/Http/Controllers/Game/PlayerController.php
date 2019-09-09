@@ -9,7 +9,6 @@ use App\Http\Requests\CreatePlayerRequest;
 use App\Http\Requests\UpdatePlayerRequest;
 use App\Models\Common\PaginationParameters;
 use App\Models\Eloquent\EventType;
-use App\Models\Eloquent\GamePhase;
 use App\Models\Eloquent\Player;
 use App\Models\Eloquent\Team;
 use Illuminate\Http\Request;
@@ -25,20 +24,28 @@ class PlayerController extends Controller
      */
     public function list(Request $request)
     {
+        // TODO: Create indexes on search fields
+        $query = $request->input('query');
         $params = new PaginationParameters(
             intval($request->input('page')),
             intval($request->input('limit'))
         );
 
-        $query = DB::table('players')
+        $players = Player::where('first_name', 'like', "%$query%")
+            ->orWhere('last_name', 'like', "%$query%")
             ->offset($params->offset)
             ->limit($params->limit)
             ->orderBy('last_name')
         ;
 
+        $count = Player::where('first_name', 'like', "%$query%")
+            ->orWhere('last_name', 'like', "%$query%")
+            ->count()
+        ;
+
         return response()->json([
-            'data' => $query->get(),
-            'count' => Player::count()
+            'data' => $players->get(),
+            'count' => $count
         ]);
     }
 
