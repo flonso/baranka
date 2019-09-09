@@ -9,9 +9,7 @@
 
 
   <form>
-    <div class="form-group">
-      <select id="playerRegistered"></select>
-    </div>
-      @component('helpers/player-id-input') @endcomponent
+    @component('helpers/select') select-player-id @endcomponent
+    @component('helpers/player-id-input') @endcomponent
   </form>
 @endcomponent

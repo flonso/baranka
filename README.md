@@ -40,11 +40,11 @@ PHP Requirements:
     - [x] Discovery points reduce by 100 for each two game phases it is possible to discover the item in
     - [x] Distribute adventure points among player validating it
 - Board game
-  - [ ] Be able to register points gained in the board game category
+  - [x] Be able to register points gained in the board game category
 - Quests
-  - [ ] Be able to register points gained in quests
+  - [x] Be able to register points gained in quests
 - Events
-  - [ ] Save an event for each gain/loss of points as well as who it benefits to
+  - [x] Save an event for each gain/loss of points as well as who it benefits to
   - [ ] Track which user of the system has performed an action (optional)
   - [x] Compute rankings per event category
 - [x] Custom value settings
@@ -56,6 +56,7 @@ PHP Requirements:
 Install project dependencies:
 
 `composer install`
+`npm install`
 
 Then configure your environment file:
 
@@ -66,6 +67,11 @@ And adapt the parameters to your local configuration with your text editor of ch
 Run development server:
 
 `php artisan serve`
+
+ **Warning** If you are testing the frontend you need to run two instances of `php artisan serve` because it is single threaded. Simply add `API_HOST=` and `API_PORT=` in the .env file with the port and host of the development server instance you DON'T use for displaying the frontend.
+
+If you update the CSS/JavaScript :
+`npm run watch`
 
 **Important**
 Do not forget to run migrations before starting developing by executing `php artisan migrate`.

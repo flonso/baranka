@@ -59,8 +59,7 @@ class Team extends BaseModel
     }
 
     public function getScoreByEventType(string $eventType) {
-        return DB::table('events')
-            ->where('type', '=', $eventType)
+        return Event::where('type', '=', $eventType)
             ->where('team_id', '=', $this->id)
             ->sum('value')
         ;

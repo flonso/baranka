@@ -3,13 +3,86 @@
  */
 import Axios from 'axios';
 
+function handleError(error) {
+  if (error.response) {
+    const data = error.response.data
+    const message = `[${data.code}] ${data.message}`
+
+    toast('Une erreur est survenue', message, 'alert')
+
+    const errors = data.errors
+    if (typeof errors !== 'undefined') {
+      Object.keys(errors).forEach((key) => {
+        const error = errors[key]
+        toast(`Une erreur est survenue`, error.join(','), 'alert')
+      })
+    }
+  } else if (error.request) {
+    // The request was made but no response was received
+    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+    // http.ClientRequest in node.js
+    toast('Une erreur est survenue', 'Impossible de contacter le serveur', 'alert')
+  } else {
+    // Something happened in setting up the request that triggered an Error
+    toast('Une erreur inattendue est survenue', error.message, 'alert')
+  }
+  console.log(error.config);
+}
+
+function handleSuccess(response, modal) {
+  modal.modal('hide')
+  toast('Information', 'Données sauvegardées', 'success')
+}
+
+function toast(title, message, type) {
+  let clazz;
+  if (type === 'alert') {
+    clazz = 'text-danger'
+  } else if (type === 'info') {
+    clazz = 'text-info'
+  } else if (type === 'warn') {
+    clazz = 'text-warn'
+  } else if (type == 'success') {
+    clazz = 'text-success'
+  }
+
+  const toast = $(
+    '<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">' +
+      '<div class="toast-header">' +
+        `<strong class="mr-auto">${title}</strong>` +
+        `<small class="text-muted">À l'instant</small>` +
+        `<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Fermer">` +
+          '<span aria-hidden="true">&times;</span>' +
+        '</button>' +
+      '</div>' +
+      '<div class="toast-body">' +
+        `<span class="${clazz}">${message}</span>` +
+      '</div>' +
+    '</div>'
+  )
+
+  $('#toastContainer').append(toast)
+  toast.toast({
+    delay: 5000
+  })
+
+  toast.toast('show')
+
+  toast.on('hidden.bs.toast', () => {
+    toast.remove()
+  })
+}
+
 function bindFormSubmit(containerId, onSubmitCallback) {
   const modal = $(`#${containerId}`)
   const form = modal.find('.modal-body form')
 
   const submitButton = modal.find('.modal-footer button:not([data-dismiss])')
-  console.log(submitButton, modal)
 
+  // For submit on enter press
+  form.append(
+    '<input type="submit" style="position: absolute; left: -9999px"/>'
+  )
   submitButton.click(() => {
     form.submit()
   })
@@ -20,7 +93,7 @@ function bindFormSubmit(containerId, onSubmitCallback) {
   })
 }
 
-function bindMommandLou() {
+function bindMommandLouModal() {
   bindFormSubmit('mommandLouModal', (modal, form) => {
     const playerId = form.find('#playerId').val()
     const pointsGained = form.find('#pointsGained').val()
@@ -34,24 +107,28 @@ function bindMommandLou() {
       {
         "gainedBoardPoints": pointsGained
       }
-    ).then((response) => {
-      modal.modal('hide')
-    }, (error) => {
-      alert(error)
-    });
+    ).then(
+      (r) => handleSuccess(r, modal)
+    ).catch(handleError)
   });
 }
 
-function bindItemSelect2(selector) {
+function bindItemSelect2(selector, filters) {
   $(selector).select2({
     placeholder: "Chercher un objet",
+    width: '100%',
     ajax: {
       url: '/api/items',
       dataType: 'json',
       data: (params) => {
-        return {
+        let finalParams = {
           query: params.term
         }
+
+        Object.assign(finalParams, filters)
+        console.log(finalParams, filters)
+
+        return finalParams
       },
       processResults: (data) => {
         const processed = $.map(data.data, (item) => {
@@ -68,10 +145,41 @@ function bindItemSelect2(selector) {
   })
 }
 
+function bindPlayerSelect2(selector, filters) {
+  $(selector).select2({
+    placeholder: "Chercher un joueur",
+    width: '100%',
+    ajax: {
+      url: '/api/players',
+      dataType: 'json',
+      data: (params) => {
+        let finalParams = {
+          query: params.term
+        }
+
+        Object.assign(finalParams, filters)
+        console.log(finalParams, filters)
+
+        return finalParams
+      },
+      processResults: (data) => {
+        const processed = $.map(data.data, (player) => {
+          player.text = `${player.first_name} ${player.last_name.toUpperCase()} (${player.group})`
+
+          return player
+        })
+        return {
+          results: processed
+        }
+      },
+      cache: false
+    }
+  })
+}
+
 function bindDiscoveredItem() {
-  console.log('binding')
   bindFormSubmit('discoveredItemModal', (modal, form) => {
-    const itemId = form.find('#itemId').val()
+    const itemId = form.find('select.select-item-id').val()
     const playerIds = form.find('#playerIds').val().split('\n')
 
     Axios.patch(
@@ -79,17 +187,148 @@ function bindDiscoveredItem() {
       {
         "discoveredByPlayerIds": playerIds
       }
-    ).then((response) => {
-      modal.modal('hide')
-    }, (error) => {
-      alert(error)
-    })
+    ).then(
+      (r) => handleSuccess(r, modal)
+    ).catch(handleError)
   })
 
-  bindItemSelect2('#discoveredItemModal select.select-item-id')
+  bindItemSelect2(
+    '#discoveredItemModal form select.select-item-id',
+    {
+      discovered: false,
+      withMultiplier: false // filtering out boat pieces
+    }
+  )
+}
+
+function bindQuestModal() {
+  bindFormSubmit('questModal', (modal, form) => {
+    const playerId = form.find('#playerId').val()
+    const pointsGained = form.find('#pointsGainedQuest').val()
+
+    Axios.patch(
+      `api/players/${playerId}`,
+      {
+        "gainedQuestPoints": pointsGained
+      }
+    ).then(
+      (r) => handleSuccess(r, modal)
+    ).catch(handleError)
+  })
+}
+
+function bindLevelUpModal() {
+  bindFormSubmit('levelUpPlayerModal', (modal, form) => {
+    const playerId = form.find('#playerId').val()
+
+    Axios.patch(
+      `api/players/${playerId}`,
+      {
+        "levelUp": true
+      }
+    ).then(
+      (r) => handleSuccess(r, modal)
+    ).catch(handleError)
+  })
+}
+
+function bindBoatPieceModal() {
+  bindFormSubmit('discoveredBoatModal', (modal, form) => {
+    const playerId = form.find('#playerId').val()
+    const itemId = form.find('select.select-item-id').val()
+
+
+    Axios.patch(
+      `api/items/${itemId}`,
+      {
+        "discoveredByPlayerIds": [playerId]
+      }
+    ).then(
+      (r) => handleSuccess(r, modal)
+    ).catch(handleError)
+  })
+
+  bindItemSelect2(
+    '#discoveredBoatModal form select.select-item-id',
+    {
+      discovered: false,
+      withMultiplier: true // filtering out normal items
+    }
+  )
+}
+
+function bindAdventureCompletedModal() {
+  bindFormSubmit('adventureCompletedModal', (modal, form) => {
+    const itemId = form.find('select.select-item-id').val()
+    const playerIds = form.find('#playerIds').val().split('\n')
+
+    Axios.patch(
+      `api/items/${itemId}`,
+      {
+        "adventureCompletedByPlayerIds": playerIds
+      }
+    ).then(
+      (r) => handleSuccess(r, modal)
+    ).catch(handleError)
+  })
+
+  bindItemSelect2(
+    '#adventureCompletedModal form select.select-item-id',
+    {
+      discovered: true,
+      adventureCompleted: false,
+      withMultiplier: false // filtering out boat pieces
+    }
+  )
+}
+
+function bindRegisterPlayerModal() {
+  bindFormSubmit('registerPlayerModal', (modal, form) => {
+    const playerId = form.find('select.select-player-id').val()
+    const playerCode = form.find('#playerId').val()
+
+    Axios.patch(
+      `api/players/${playerId}`,
+      {
+        "code": playerCode
+      }
+    ).then(
+      (r) => handleSuccess(r, modal)
+    ).catch(handleError)
+  })
+
+  bindPlayerSelect2(
+    '#registerPlayerModal form select.select-player-id',
+    {
+      limit: 20
+    }
+  )
+}
+
+function bindManualPointsModal(containerId) {
+  bindFormSubmit(containerId, (modal, form) => {
+    const playerId = form.find('#playerId').val()
+    const points = form.find('#pointsInput').val()
+
+    Axios.patch(
+      `api/players/${playerId}`,
+      {
+        "scoreIncrement": points
+      }
+    ).then(
+      (r) => handleSuccess(r, modal)
+    ).catch(handleError)
+  })
 }
 
 export function bindActions() {
-  bindMommandLou()
+  bindMommandLouModal()
   bindDiscoveredItem()
+  bindQuestModal()
+  bindLevelUpModal()
+  bindBoatPieceModal()
+  bindAdventureCompletedModal()
+  bindRegisterPlayerModal()
+  bindManualPointsModal('manualPointsModal')
+  bindManualPointsModal('treasureModal')
 }

@@ -82,6 +82,8 @@ class UpdatePlayerRequest extends BaseFormRequest
 
     public function messages() {
         return [
+            'gainedQuestPoints.regex' => "Les points gagnés doivent être un nombre ('$this->gainedQuestPoints' reçu)",
+            'gainedBoardPoints.regex' => "Les points gagnés doivent être un nombre ('$this->gainedBoardPoints' reçu)",
             'level.lt' => "Le niveau doit être inférieur ou égal à 6 ('$this->level' reçu)",
             'code.min' => "Le code ne doit pas être vide.",
             'code.max' => "Le code ne doit pas excéder 250 caractères",

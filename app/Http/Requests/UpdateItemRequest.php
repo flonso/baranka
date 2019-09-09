@@ -35,9 +35,11 @@ class UpdateItemRequest extends BaseFormRequest
             ],
             'discoveredByPlayerIds' => [
                 'array',
+                'min:1'
             ],
             'adventureCompletedByPlayerIds' => [
-                'array'
+                'array',
+                'min:1'
             ]
         ];
 

@@ -9,8 +9,7 @@
 
 
   <form>
-    @component('helpers/item-select') @endcomponent
-        @component('helpers/player-id-input') @endcomponent
-
+    @component('helpers/select') select-item-id @endcomponent
+    @component('helpers/player-id-input') @endcomponent
   </form>
 @endcomponent

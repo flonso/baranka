@@ -7,6 +7,9 @@
 @endsection
 
 @section('content')
+	<div class="btn-group-vertical" role="group" aria-label="">
+
+	</div>
 	<div class="row">
 		<div class="col">
 		<button
@@ -33,9 +36,9 @@
 				type="button"
 				class="btn btn-block btn-primary"
 				data-toggle="modal"
-				data-target="#validateQuestModal"
+				data-target="#questModal"
 			>
-				Valider une quête
+				Entrer les points d'une quête
 			</button>
 		</div>
 		<div class="col">
@@ -43,7 +46,7 @@
 				type="button"
 				class="btn btn-block btn-primary"
 				data-toggle="modal"
-				data-target="#levelUpModal"
+				data-target="#levelUpPlayerModal"
 			>
 				Augmenter le niveau d'un joueur
 			</button>
@@ -52,17 +55,22 @@
 
 	<div class="row">
 		<div class="col">
-		<button
+			<button
 				type="button"
 				class="btn btn-block btn-primary"
 				data-toggle="modal"
-				data-target="#registerBoatPieceModal"
+				data-target="#discoveredBoatModal"
 			>
 				Enregistrer une pièce de bateau
 			</button>
 		</div>
 		<div class="col">
-			<button type="button" class="btn btn-block btn-primary">
+			<button
+				type="button"
+				class="btn btn-block btn-primary"
+				data-toggle="modal"
+				data-target="#adventureCompletedModal"
+			>
 				Enregistrer un certificat d'acheminement
 			</button>
 		</div>
@@ -71,7 +79,7 @@
 				type="button"
 				class="btn btn-block btn-primary"
 				data-toggle="modal"
-				data-target="#changePlayerCode"
+				data-target="#registerPlayerModal"
 			>
 				Enregistrer le bracelet d'un joueur
 			</button>
@@ -86,27 +94,17 @@
 				type="button"
 				class="btn btn-block btn-primary"
 				data-toggle="modal"
-				data-target="#enterBonusModal"
+				data-target="#manualPointsModal"
 			>
-				Enregistrer un bonus
+				Enregistrer un bonus/malus
 			</button>
 		</div>
 		<div class="col">
-		<button
+			<button
 				type="button"
 				class="btn btn-block btn-primary"
 				data-toggle="modal"
-				data-target="#enterMalusModal"
-			>
-				Enregistrer un malus
-			</button>
-		</div>
-		<div class="col">
-		<button
-				type="button"
-				class="btn btn-block btn-primary"
-				data-toggle="modal"
-				data-target="#registerTreasureModal"
+				data-target="#treasureModal"
 			>
 				Enregistrer la découverte du trésor!
 			</button>
@@ -117,6 +115,14 @@
 
 	@component('modals/mommand-lou-modal') @endcomponent
 	@component('modals/discovered-item-modal') @endcomponent
+	@component('modals/manual-points-modal') @endcomponent
+	@component('modals/discovered-item-modal') @endcomponent
+	@component('modals/adventure-completed-modal') @endcomponent
+	@component('modals/discovered-boat-modal') @endcomponent
+	@component('modals/found-treasure-modal') @endcomponent
+	@component('modals/levelup-player-modal') @endcomponent
+	@component('modals/quest-modal') @endcomponent
+	@component('modals/register-player-modal') @endcomponent
 @endsection
 
 @section('scripts')

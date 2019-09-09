@@ -13,12 +13,18 @@
 				<link href="css/app.css" rel ="stylesheet">
     </head>
     <body>
+		<div aria-live="polite" aria-atomic="true" style="position: relative; right: 30px; top: 30px; z-index: 100000">
+			<!-- Position it -->
+			<div style="position: absolute; top: 0; right: 0;" id="toastContainer">
+			</div>
+		</div>
+
 		@section('sidebar')
 			<nav class="navbar navbar-dark bg-dark justify-content-md-center navbar-expand-sm">
 				<ul class="navbar-nav">
 			 		<li class="nav-item"><a class="nav-link" href="{{ url('game') }}">Jeu</a></li>
-					<li class="nav-item"><a class="nav-link" href="{{ url('players') }}">Joueurs</a></li>
-					<li class="nav-item"><a class="nav-link" href="{{ url('objects') }}">Objets</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{ action('PlayersViewController@get') }}">Joueurs</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{ action('ItemsViewController@get') }}">Objets</a></li>
 					<li class="nav-item"><a class="nav-link" href="{{ url('admin') }}">Admin</a></li>
 				</ul>
 			</nav>

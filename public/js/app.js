@@ -43053,11 +43053,67 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
  */
 
 
+function handleError(error) {
+  if (error.response) {
+    var data = error.response.data;
+    var message = "[".concat(data.code, "] ").concat(data.message);
+    toast('Une erreur est survenue', message, 'alert');
+    var errors = data.errors;
+
+    if (typeof errors !== 'undefined') {
+      Object.keys(errors).forEach(function (key) {
+        var error = errors[key];
+        toast("Une erreur est survenue", error.join(','), 'alert');
+      });
+    }
+  } else if (error.request) {
+    // The request was made but no response was received
+    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+    // http.ClientRequest in node.js
+    toast('Une erreur est survenue', 'Impossible de contacter le serveur', 'alert');
+  } else {
+    // Something happened in setting up the request that triggered an Error
+    toast('Une erreur inattendue est survenue', error.message, 'alert');
+  }
+
+  console.log(error.config);
+}
+
+function handleSuccess(response, modal) {
+  modal.modal('hide');
+  toast('Information', 'Données sauvegardées', 'success');
+}
+
+function toast(title, message, type) {
+  var clazz;
+
+  if (type === 'alert') {
+    clazz = 'text-danger';
+  } else if (type === 'info') {
+    clazz = 'text-info';
+  } else if (type === 'warn') {
+    clazz = 'text-warn';
+  } else if (type == 'success') {
+    clazz = 'text-success';
+  }
+
+  var toast = $('<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">' + '<div class="toast-header">' + "<strong class=\"mr-auto\">".concat(title, "</strong>") + "<small class=\"text-muted\">\xC0 l'instant</small>" + "<button type=\"button\" class=\"ml-2 mb-1 close\" data-dismiss=\"toast\" aria-label=\"Fermer\">" + '<span aria-hidden="true">&times;</span>' + '</button>' + '</div>' + '<div class="toast-body">' + "<span class=\"".concat(clazz, "\">").concat(message, "</span>") + '</div>' + '</div>');
+  $('#toastContainer').append(toast);
+  toast.toast({
+    delay: 5000
+  });
+  toast.toast('show');
+  toast.on('hidden.bs.toast', function () {
+    toast.remove();
+  });
+}
+
 function bindFormSubmit(containerId, onSubmitCallback) {
   var modal = $("#".concat(containerId));
   var form = modal.find('.modal-body form');
-  var submitButton = modal.find('.modal-footer button:not([data-dismiss])');
-  console.log(submitButton, modal);
+  var submitButton = modal.find('.modal-footer button:not([data-dismiss])'); // For submit on enter press
+
+  form.append('<input type="submit" style="position: absolute; left: -9999px"/>');
   submitButton.click(function () {
     form.submit();
   });
@@ -43067,7 +43123,7 @@ function bindFormSubmit(containerId, onSubmitCallback) {
   });
 }
 
-function bindMommandLou() {
+function bindMommandLouModal() {
   bindFormSubmit('mommandLouModal', function (modal, form) {
     var playerId = form.find('#playerId').val();
     var pointsGained = form.find('#pointsGained').val();
@@ -43077,24 +43133,26 @@ function bindMommandLou() {
 
     axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("/api/players/".concat(playerId), {
       "gainedBoardPoints": pointsGained
-    }).then(function (response) {
-      modal.modal('hide');
-    }, function (error) {
-      alert(error);
-    });
+    }).then(function (r) {
+      return handleSuccess(r, modal);
+    })["catch"](handleError);
   });
 }
 
-function bindItemSelect2(selector) {
+function bindItemSelect2(selector, filters) {
   $(selector).select2({
     placeholder: "Chercher un objet",
+    width: '100%',
     ajax: {
       url: '/api/items',
       dataType: 'json',
       data: function data(params) {
-        return {
+        var finalParams = {
           query: params.term
         };
+        Object.assign(finalParams, filters);
+        console.log(finalParams, filters);
+        return finalParams;
       },
       processResults: function processResults(data) {
         var processed = $.map(data.data, function (item) {
@@ -43110,25 +43168,147 @@ function bindItemSelect2(selector) {
   });
 }
 
+function bindPlayerSelect2(selector, filters) {
+  $(selector).select2({
+    placeholder: "Chercher un joueur",
+    width: '100%',
+    ajax: {
+      url: '/api/players',
+      dataType: 'json',
+      data: function data(params) {
+        var finalParams = {
+          query: params.term
+        };
+        Object.assign(finalParams, filters);
+        console.log(finalParams, filters);
+        return finalParams;
+      },
+      processResults: function processResults(data) {
+        var processed = $.map(data.data, function (player) {
+          player.text = "".concat(player.first_name, " ").concat(player.last_name.toUpperCase(), " (").concat(player.group, ")");
+          return player;
+        });
+        return {
+          results: processed
+        };
+      },
+      cache: false
+    }
+  });
+}
+
 function bindDiscoveredItem() {
-  console.log('binding');
   bindFormSubmit('discoveredItemModal', function (modal, form) {
-    var itemId = form.find('#itemId').val();
+    var itemId = form.find('select.select-item-id').val();
     var playerIds = form.find('#playerIds').val().split('\n');
     axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/items/".concat(itemId), {
       "discoveredByPlayerIds": playerIds
-    }).then(function (response) {
-      modal.modal('hide');
-    }, function (error) {
-      alert(error);
-    });
+    }).then(function (r) {
+      return handleSuccess(r, modal);
+    })["catch"](handleError);
   });
-  bindItemSelect2('#discoveredItemModal select.select-item-id');
+  bindItemSelect2('#discoveredItemModal form select.select-item-id', {
+    discovered: false,
+    withMultiplier: false // filtering out boat pieces
+
+  });
+}
+
+function bindQuestModal() {
+  bindFormSubmit('questModal', function (modal, form) {
+    var playerId = form.find('#playerId').val();
+    var pointsGained = form.find('#pointsGainedQuest').val();
+    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/players/".concat(playerId), {
+      "gainedQuestPoints": pointsGained
+    }).then(function (r) {
+      return handleSuccess(r, modal);
+    })["catch"](handleError);
+  });
+}
+
+function bindLevelUpModal() {
+  bindFormSubmit('levelUpPlayerModal', function (modal, form) {
+    var playerId = form.find('#playerId').val();
+    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/players/".concat(playerId), {
+      "levelUp": true
+    }).then(function (r) {
+      return handleSuccess(r, modal);
+    })["catch"](handleError);
+  });
+}
+
+function bindBoatPieceModal() {
+  bindFormSubmit('discoveredBoatModal', function (modal, form) {
+    var playerId = form.find('#playerId').val();
+    var itemId = form.find('select.select-item-id').val();
+    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/items/".concat(itemId), {
+      "discoveredByPlayerIds": [playerId]
+    }).then(function (r) {
+      return handleSuccess(r, modal);
+    })["catch"](handleError);
+  });
+  bindItemSelect2('#discoveredBoatModal form select.select-item-id', {
+    discovered: false,
+    withMultiplier: true // filtering out normal items
+
+  });
+}
+
+function bindAdventureCompletedModal() {
+  bindFormSubmit('adventureCompletedModal', function (modal, form) {
+    var itemId = form.find('select.select-item-id').val();
+    var playerIds = form.find('#playerIds').val().split('\n');
+    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/items/".concat(itemId), {
+      "adventureCompletedByPlayerIds": playerIds
+    }).then(function (r) {
+      return handleSuccess(r, modal);
+    })["catch"](handleError);
+  });
+  bindItemSelect2('#adventureCompletedModal form select.select-item-id', {
+    discovered: true,
+    adventureCompleted: false,
+    withMultiplier: false // filtering out boat pieces
+
+  });
+}
+
+function bindRegisterPlayerModal() {
+  bindFormSubmit('registerPlayerModal', function (modal, form) {
+    var playerId = form.find('select.select-player-id').val();
+    var playerCode = form.find('#playerId').val();
+    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/players/".concat(playerId), {
+      "code": playerCode
+    }).then(function (r) {
+      return handleSuccess(r, modal);
+    })["catch"](handleError);
+  });
+  bindPlayerSelect2('#registerPlayerModal form select.select-player-id', {
+    limit: 20
+  });
+}
+
+function bindManualPointsModal(containerId) {
+  bindFormSubmit(containerId, function (modal, form) {
+    var playerId = form.find('#playerId').val();
+    var points = form.find('#pointsInput').val();
+    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/players/".concat(playerId), {
+      "scoreIncrement": points
+    }).then(function (r) {
+      return handleSuccess(r, modal);
+    })["catch"](handleError);
+  });
 }
 
 function bindActions() {
-  bindMommandLou();
+  bindMommandLouModal();
   bindDiscoveredItem();
+  bindQuestModal();
+  bindLevelUpModal();
+  bindBoatPieceModal();
+  bindAdventureCompletedModal();
+  bindRegisterPlayerModal();
+  bindManualPointsModal('manualPointsModal');
+  bindManualPointsModal('treasureModal');
 }
 
 /***/ }),
