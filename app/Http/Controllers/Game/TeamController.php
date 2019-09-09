@@ -118,21 +118,26 @@ class TeamController extends Controller
             EventType::QUEST,
             EventType::BOARD
         ];
+
+        // Indexes are EventType
         $rankings = Team::getAllScoresForEventTypes(
             $eventTypes
         );
 
         // Assign points based on rank for each event type
         $finalScoresByTeam = [];
-        foreach ($rankings as $rank) {
+        foreach ($rankings as $type => $rank) {
             foreach ($rank as $score) {
                 $teamId = $score->team_id;
                 if (!isset($finalScoresByTeam[$teamId])) {
                     $finalScoresByTeam[$teamId] = 0;
                 }
 
-
-                $finalScoresByTeam[$teamId] += 1000 - ($score->rank - 1) * 200;
+                if ($type == EventType::QUEST) {
+                    $finalScoresByTeam[$teamId] += $score->gainedPoints;
+                } else {
+                    $finalScoresByTeam[$teamId] += $score->gainedPoints;
+                }
             }
         }
 

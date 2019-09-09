@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateTeamRequest;
 use App\Models\Eloquent\BaseModel;
 use App\Models\Eloquent\Event;
 use App\Models\Eloquent\EventType;
+use stdClass;
 
 class Team extends BaseModel
 {
@@ -80,8 +81,10 @@ class Team extends BaseModel
         ;
 
         $ranks = [];
+        $teamsWithScore = [];
         foreach ($types as $type) {
             $ranks[$type] = 0;
+            $teamsWithScore[$type] = [];
         }
         $rankingByCategory = [];
         foreach ($allTeamScores as $s) {
@@ -90,9 +93,33 @@ class Team extends BaseModel
                 $rankingByCategory[$type] = [];
             }
 
+            $teamsWithScore[$type][] = $s->team_id;
             $ranks[$type] += 1; // Works because allTeamScores is sorted by descending score
             $s->rank = $ranks[$type];
+
+            if ($type == EventType::QUEST) {
+                $s->gainedPoints = 350 - ($s->rank - 1) * 70;
+            } else {
+                $s->gainedPoints = 1000 - ($s->rank - 1) * 200;
+            }
+
             $rankingByCategory[$type][] = $s;
+        }
+
+        // Add score of 0 for teams that didn't register a scoring event at this point
+        foreach ($teamsWithScore as $type => $teamIds) {
+            $missingTeams = Team::whereNotIn('id', $teamIds)->get();
+            foreach ($missingTeams as $team) {
+                $s = new stdClass();
+                $s->team_id = $team->id;
+                $s->name = $team->name;
+                $s->score = 0;
+                $s->gainedPoints = 0;
+                $s->type = $type;
+                $ranks[$type] += 1;
+                $s->rank = $ranks[$type];
+                $rankingByCategory[$type][] = $s;
+            }
         }
 
         return $rankingByCategory;

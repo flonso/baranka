@@ -22,25 +22,68 @@ class ItemController extends Controller
     public function list(Request $request) {
         $query = $request->input('query');
 
+        $withMultiplier = $request->input('withMultiplier', null);
+        $withMultiplier = isset($withMultiplier) ? filter_var($withMultiplier, FILTER_VALIDATE_BOOLEAN) : null;
+
+        $adventureCompleted = $request->input('adventureCompleted', null);
+        $adventureCompleted = isset($adventureCompleted) ? filter_var($adventureCompleted, FILTER_VALIDATE_BOOLEAN) : null;
+
+        $discovered = $request->input('discovered', null);
+        $discovered = isset($discovered) ? filter_var($discovered, FILTER_VALIDATE_BOOLEAN) : null;
+
         $params = new PaginationParameters(
             intval($request->input('page')),
             intval($request->input('limit'))
         );
 
-        $items = Item::with('discoveredByPlayers')
-            ->with('adventureCompletedByPlayers')
-            ->where('name', 'like', "%$query%")
-            ->offset($params->offset)
+        // The base requests
+        $items = Item::offset($params->offset)
             ->limit($params->limit);
-
-        $count = Item::with('discoveredByPlayers')
+        $countQuery = Item::with('discoveredByPlayers')
         ->with('adventureCompletedByPlayers')
-        ->where('name', 'like', "%$query%")
-        ->count();
+        ;
+
+        // Filter based on parameters
+        if (isset($query)) {
+            $items->where('name', 'like', "%$query%");
+            $countQuery->where('name', 'like', "%$query%");
+        }
+
+        if (isset($withMultiplier)) {
+            if ($withMultiplier === true) {
+                $items = $items->where('multiplier_increment', '!=', '0');
+                $countQuery = $countQuery->where('multiplier_increment', '!=', '0');
+            } else {
+                $items = $items->where('multiplier_increment', '=', '0');
+                $countQuery = $countQuery->where('multiplier_increment', '=', '0');
+            }
+        }
+
+        if (isset($discovered)) {
+            if ($discovered === true) {
+                $items = $items->has('discoveredByPlayers')
+                    ->with('discoveredByPlayers');
+                $countQuery = $countQuery->has('discoveredByPlayers');
+            } else {
+                $items = $items->doesntHave('discoveredByPlayers');
+                $countQuery = $countQuery->doesntHave('discoveredByPlayers');
+            }
+        }
+
+        if (isset($adventureCompleted)) {
+            if ($adventureCompleted === true) {
+                $items = $items->has('adventureCompletedByPlayers')
+                    ->with('adventureCompletedByPlayers');
+                $countQuery = $countQuery->has('adventureCompletedByPlayers');
+            } else {
+                $items = $items->doesntHave('adventureCompletedByPlayers');
+                $countQuery = $countQuery->doesntHave('adventureCompletedByPlayers');
+            }
+        }
 
         return response()->json([
             'data' => $items->get(),
-            'count' => $count
+            'count' => $countQuery->count()
         ]);
     }
 
