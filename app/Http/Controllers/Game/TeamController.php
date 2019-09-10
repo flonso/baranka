@@ -120,6 +120,7 @@ class TeamController extends Controller
         ];
 
         // Indexes are EventType
+        // FIXME: What about equalities ?
         $rankings = Team::getAllScoresForEventTypes(
             $eventTypes
         );

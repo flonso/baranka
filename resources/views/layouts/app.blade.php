@@ -25,7 +25,8 @@
 			 		<li class="nav-item"><a class="nav-link" href="{{ url('game') }}">Jeu</a></li>
 					<li class="nav-item"><a class="nav-link" href="{{ action('PlayersViewController@get') }}">Joueurs</a></li>
 					<li class="nav-item"><a class="nav-link" href="{{ action('ItemsViewController@get') }}">Objets</a></li>
-					<li class="nav-item"><a class="nav-link" href="{{ url('admin') }}">Admin</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{ action('AdminViewController@get') }}">Admin</a></li>
+					<li class="nav-item"><a class="nav-link" href="{{ action('RankingViewController@get') }}">Classement</a></li>
 				</ul>
 			</nav>
 		@show

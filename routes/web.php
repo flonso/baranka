@@ -20,3 +20,5 @@ Route::get("/admin", 'AdminViewController@login');
 Route::post("/admin", 'AdminViewController@get');
 Route::get("/players", 'PlayersViewController@get');
 Route::get("/items", 'ItemsViewController@get');
+
+Route::get('/rankings', 'RankingViewController@get');

@@ -11,6 +11,10 @@ try {
     window.$ = window.jQuery = require('jquery');
 
     require('bootstrap');
+    require('chart.js');
+    require('chartjs-plugin-datalabels');
+
+    window.moment = require('moment')
 
     window.dt = require( 'datatables.net-bs4' )(window.$)
     window.fa = require('@fortawesome/fontawesome-free')

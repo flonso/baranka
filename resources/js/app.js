@@ -10,10 +10,12 @@ require('select2')
 import * as game from './game/game';
 import * as players from './game/players'
 import * as admin from './game/admin';
+import * as ranking from './game/ranking';
 
 window.game = game;
 window.players = players;
 window.admin = admin;
+window.ranking = ranking;
 // window.Vue = require('vue');
 
 /**
