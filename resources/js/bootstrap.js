@@ -11,6 +11,8 @@ try {
     window.$ = window.jQuery = require('jquery');
 
     require('bootstrap');
+
+    window.dt = require( 'datatables.net-bs4' )(window.$)
 } catch (e) {}
 
 /**

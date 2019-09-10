@@ -77,6 +77,8 @@ function bindFormSubmit(containerId, onSubmitCallback) {
   const modal = $(`#${containerId}`)
   const form = modal.find('.modal-body form')
 
+  console.log('form = ', form)
+
   const submitButton = modal.find('.modal-footer button:not([data-dismiss])')
 
   // For submit on enter press

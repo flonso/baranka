@@ -11,30 +11,40 @@
         <h1>Objets</h1>
     </div>
 	<div class="row">
-        <table class="table table-striped">
+        <table class="table table-striped" id="items">
             <thead>
             <tr>
                 <th scope="col">#</th>
                 <th>Nom</th>
                 <th>Points de découverte</th>
                 <th>Points d'aventure</th>
+                <th>Incrément du multiplicateur</th>
+                <th>Découvert</th>
+                <th>Aventure terminée</th>
             </tr>
             </thead>
-            <tbody>
-            @forelse ($players as $player)
-                <tr>
-                    <th scope="row">
-                    <td>{{ $player->name }}</td>
-                    <td>{{ $player->discovery_points }}</td>
-                    <td>{{ $player->adventure_points }}</td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="4">Il n'y a pas d'objets</td>
-                </tr>
-            @endforelse
-            </tbody>
         </table>
     </div>
 
 @endsection
+
+@section('scripts')
+    @parent
+    <script>
+    $(document).ready(function() {
+        $('#items').DataTable( {
+            "ajax": "api/items?limit=1000",
+            "columns": [
+                { "data": "id"},
+                { "data": "name" },
+                { "data": "discovery_points" },
+                { "data": "adventure_points" },
+                { "data": "multiplier_increment"},
+                { "data": "discovered" },
+                { "data": "adventure_completed" }
+            ]
+        } );
+    } );
+    </script>
+@endsection
+

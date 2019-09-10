@@ -6,6 +6,8 @@
 
 @import '~select2/dist/css/select2.min.css';
 
+@import '~datatables.net-bs4/css/dataTables.bootstrap4.min.css';
+
 
 
 // Custom CSS
@@ -15,4 +17,8 @@
 
 .container {
     margin-top: 30px;
+}
+
+div.dataTables_wrapper {
+  width: 100%;
 }
