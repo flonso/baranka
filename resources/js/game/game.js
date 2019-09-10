@@ -3,7 +3,7 @@
  */
 import Axios from 'axios';
 
-function handleError(error) {
+export function handleError(error) {
   if (error.response) {
     const data = error.response.data
     const message = `[${data.code}] ${data.message}`
@@ -29,12 +29,14 @@ function handleError(error) {
   console.log(error.config);
 }
 
-function handleSuccess(response, modal) {
-  modal.modal('hide')
+export function handleSuccess(response, modal) {
+  if (typeof modal !== 'undefined') {
+    modal.modal('hide')
+  }
   toast('Information', 'Données sauvegardées', 'success')
 }
 
-function toast(title, message, type) {
+export function toast(title, message, type) {
   let clazz;
   if (type === 'alert') {
     clazz = 'text-danger'

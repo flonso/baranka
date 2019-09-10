@@ -8,8 +8,12 @@ require('./bootstrap');
 
 require('select2')
 import * as game from './game/game';
+import * as players from './game/players'
+import * as admin from './game/admin';
 
 window.game = game;
+window.players = players;
+window.admin = admin;
 // window.Vue = require('vue');
 
 /**

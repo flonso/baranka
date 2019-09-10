@@ -13,6 +13,7 @@ try {
     require('bootstrap');
 
     window.dt = require( 'datatables.net-bs4' )(window.$)
+    window.fa = require('@fortawesome/fontawesome-free')
 } catch (e) {}
 
 /**

@@ -32,18 +32,7 @@
     @parent
     <script>
     $(document).ready(function() {
-        $('#players').DataTable( {
-            "ajax": "api/players?limit=1000",
-            "columns": [
-                { "data": "id"},
-                { "data": "code" },
-                { "data": "first_name" },
-                { "data": "last_name" },
-                { "data": "group" },
-                { "data": "score" },
-                { "data": "comments"}
-            ]
-        } );
+        players.initializeDataTables()
     } );
     </script>
 @endsection

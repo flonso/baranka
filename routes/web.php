@@ -16,8 +16,7 @@ Route::redirect('/', '/game', 301);
 Route::get("/game", function () {
     return view('game');
 });
-Route::get("/admin", function () {
-    return view('admin');
-});
+Route::get("/admin", 'AdminViewController@login');
+Route::post("/admin", 'AdminViewController@get');
 Route::get("/players", 'PlayersViewController@get');
 Route::get("/items", 'ItemsViewController@get');
