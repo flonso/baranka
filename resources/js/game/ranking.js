@@ -4,7 +4,7 @@ const labelsMapping = {
   'board': `Mommand'Lou`,
   'quest': 'Quêtes',
   'item': 'Objets et acheminement',
-  'level_change': 'Niveaux'
+  'level_change': 'Évolution'
 }
 const teamColors = {
   'contantinople': 'orange',
@@ -16,7 +16,7 @@ const teamColors = {
 }
 
 let timerInterval = undefined
-const intervalInSeconds = 10
+const intervalInSeconds = 300
 
 export function initGlobalRankChart() {
   const ctx = $('#globalRanks').get(0).getContext('2d')
@@ -29,6 +29,13 @@ export function initGlobalRankChart() {
     },
     animation: {
       duration: 1000
+    },
+    scales: {
+      yAxes: [{
+          ticks: {
+              beginAtZero: true
+          }
+      }]
     }
   }
   const chart = new Chart(ctx, {
@@ -54,6 +61,13 @@ export function initAllRanksChart() {
     },
     animation: {
       duration: 1000
+    },
+    scales: {
+      yAxes: [{
+          ticks: {
+              beginAtZero: true
+          }
+      }]
     }
   }
   const chart = new Chart(ctx, {
@@ -101,7 +115,7 @@ export function refreshAllRanksChart(chart) {
       `Mommand'Lou`,
       'Quêtes',
       'Objets et acheminement',
-      'Niveaux'
+      'Évolutions'
     ]
 
     chart.data.datasets = datasets
@@ -144,15 +158,17 @@ export function refreshGlobalRankChart(chart) {
 export function initCharts() {
   const allRanksChart = initAllRanksChart()
   const globalRanksChart = initGlobalRankChart()
-
-  startTimer(intervalInSeconds, $('#timer'), () => {
+  const refresh = () => {
     refreshGlobalRankChart(globalRanksChart)
     refreshAllRanksChart(allRanksChart)
 
     $('#lastRefreshedAt').text(
       `Dernière mise à jour à ${moment().format('HH:mm:ss')}`
     )
-  })
+  }
+
+  refresh()
+  startTimer(intervalInSeconds, $('#timer'), refresh)
 }
 
 function startTimer(duration, display, callback) {

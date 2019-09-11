@@ -39,7 +39,7 @@ class Item extends BaseModel
     }
 
     public function getDiscoverableAttribute() {
-        return $this->discoverable_from_phase >= GamePhase::current()->number;
+        return $this->discoverable_from_phase <= GamePhase::current()->number;
     }
 
     public function getDiscoveredAttribute() {
@@ -104,13 +104,13 @@ class Item extends BaseModel
 
         if (isset($update->discoveredByPlayerIds) && !$this->discovered && $this->discoverable) {
             $nbOfPlayers = count($update->discoveredByPlayerIds);
-            $players = Player::find($update->discoveredByPlayerIds);
+            $players = Player::findByCodeOrId($update->discoveredByPlayerIds);
 
-            $this->discoveredByPlayers()->attach($update->discoveredByPlayerIds);
+            $this->discoveredByPlayers()->attach($players);
             foreach ($players as $player) {
                 $event = new Event();
                 $event->item()->associate($this);
-                $event->value = $this->currentDiscoveryPoints / $nbOfPlayers;
+                $event->value = (double) $this->currentDiscoveryPoints / (double) $nbOfPlayers;
                 $event->type = EventType::ITEM;
                 $event->player()->associate($player);
                 $event->team()->associate($player->team_id);
@@ -125,13 +125,13 @@ class Item extends BaseModel
             $this->discovered
         ) {
             $nbOfPlayers = count($update->adventureCompletedByPlayerIds);
-            $players = Player::find($update->adventureCompletedByPlayerIds);
+            $players = Player::findByCodeOrId($update->adventureCompletedByPlayerIds);
 
-            $this->adventureCompletedByPlayers()->attach($update->adventureCompletedByPlayerIds);
+            $this->adventureCompletedByPlayers()->attach($players);
             foreach ($players as $player) {
                 $event = new Event();
                 $event->item()->associate($this);
-                $event->value = $this->adventure_points / $nbOfPlayers;
+                $event->value = (double) $this->adventure_points / (double) $nbOfPlayers;
                 $event->type = EventType::ITEM;
                 $event->player()->associate($player);
                 $event->team()->associate($player->team_id);

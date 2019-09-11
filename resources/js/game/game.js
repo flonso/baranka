@@ -29,11 +29,13 @@ export function handleError(error) {
   console.log(error.config);
 }
 
-export function handleSuccess(response, modal) {
+export function handleSuccess(response, modal, message) {
   if (typeof modal !== 'undefined') {
+    modal.find('select').select2('val', '')
+    modal.find('form').trigger('reset')
     modal.modal('hide')
   }
-  toast('Information', 'Données sauvegardées', 'success')
+  toast('Information', (message) ? message : 'Données sauvegardées', 'success')
 }
 
 export function toast(title, message, type) {
@@ -221,6 +223,25 @@ function bindQuestModal() {
   })
 }
 
+
+function bindLevelDownModal() {
+  bindFormSubmit('levelDownPlayerModal', (modal, form) => {
+    const playerId = form.find('#playerId').val()
+
+    Axios.patch(
+      `api/players/${playerId}`,
+      {
+        "cancelLevelUp": true
+      }
+    ).then(
+      (r) => {
+        const message = `${r.data.first_name} ${r.data.last_name} est maintenant au niveau ${r.data.level}`
+        handleSuccess(r, modal, message)
+      }
+    ).catch(handleError)
+  })
+}
+
 function bindLevelUpModal() {
   bindFormSubmit('levelUpPlayerModal', (modal, form) => {
     const playerId = form.find('#playerId').val()
@@ -231,7 +252,10 @@ function bindLevelUpModal() {
         "levelUp": true
       }
     ).then(
-      (r) => handleSuccess(r, modal)
+      (r) => {
+        const message = `${r.data.first_name} ${r.data.last_name} est maintenant au niveau ${r.data.level}`
+        handleSuccess(r, modal, message)
+      }
     ).catch(handleError)
   })
 }
@@ -330,6 +354,7 @@ export function bindActions() {
   bindDiscoveredItem()
   bindQuestModal()
   bindLevelUpModal()
+  bindLevelDownModal()
   bindBoatPieceModal()
   bindAdventureCompletedModal()
   bindRegisterPlayerModal()

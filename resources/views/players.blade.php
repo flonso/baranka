@@ -19,6 +19,7 @@
                 <th>Prénom</th>
                 <th>Nom</th>
                 <th>Groupe</th>
+                <th>Niveau</th>
                 <th>Score</th>
                 <th>Commentaire</th>
             </tr>

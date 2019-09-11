@@ -76,14 +76,14 @@
 			<div class="col-sm">
 				<div class="card">
 					<div class="card-body">
-						<h5 class="card-title">Joueurs</h5>
+						<h5 class="card-title">Joueurs et évolution</h5>
 						<button
 							type="button"
 							class="btn btn-block btn-primary"
 							data-toggle="modal"
 							data-target="#registerPlayerModal"
 						>
-							Enregistrer le bracelet d'un joueur
+							Enregistrer le Talisman d'un joueur
 						</button>
 						<button
 							type="button"
@@ -92,6 +92,14 @@
 							data-target="#levelUpPlayerModal"
 						>
 							Augmenter le niveau d'un joueur
+						</button>
+						<button
+							type="button"
+							class="btn btn-block btn-primary"
+							data-toggle="modal"
+							data-target="#levelDownPlayerModal"
+						>
+							Annuler l'augmentation de niveau d'un joueur
 						</button>
 					</div>
 				</div>
@@ -129,6 +137,7 @@
 	@component('modals/discovered-boat-modal') @endcomponent
 	@component('modals/found-treasure-modal') @endcomponent
 	@component('modals/levelup-player-modal') @endcomponent
+	@component('modals/leveldown-player-modal') @endcomponent
 	@component('modals/quest-modal') @endcomponent
 	@component('modals/register-player-modal') @endcomponent
 @endsection

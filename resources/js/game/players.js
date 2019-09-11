@@ -11,6 +11,7 @@ export function initializeDataTables() {
           { "data": "first_name" },
           { "data": "last_name" },
           { "data": "group" },
+          { "data": "level"},
           { "data": "score" },
           {
               "data": "comments",

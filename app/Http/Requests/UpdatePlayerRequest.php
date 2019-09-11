@@ -32,6 +32,9 @@ class UpdatePlayerRequest extends BaseFormRequest
             'levelUp' => [
                 'boolean'
             ],
+            'cancelLevelUp' => [
+                'boolean'
+            ],
             'level' => [
                 'digits_between:1,2',
                 'min:1',

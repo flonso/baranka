@@ -42,21 +42,23 @@ class Player extends BaseModel
     /**
      * Retrieves a player based on its id or its code.
      *
-     * @param  int|string $idOrCode
-     * @return App\Models\Eloquent\Player|null
+     * @param  int|string|array $idOrCode
+     * @return App\Models\Eloquent\Player|Collection|null
      */
     public static function findByCodeOrId($idOrCode) {
-        $player = DB::table('players')
-            ->where('code', '=', $idOrCode)
-            ->orWhere('id', '=', $idOrCode)
-            ->first()
-        ;
-
-        if ($player != null) {
-            $player = self::toInstance($player, new Player());
+        $query = null;
+        $isCollection = is_array($idOrCode);
+        if ($isCollection) {
+            $query = Player::whereIn('code', $idOrCode)
+                ->orWhere('id', $idOrCode)
+            ;
+        } else {
+            $query = Player::where('code', '=', $idOrCode)
+                ->orWhere('id', '=', $idOrCode)
+            ;
         }
 
-        return $player;
+        return ($isCollection) ? $query->get() : $query->first();
     }
 
     /**
@@ -152,6 +154,19 @@ class Player extends BaseModel
                 EventType::BOARD
             );
             $this->score += $update->gainedBoardPoints;
+        }
+
+        if (isset($update->cancelLevelUp) && $update->cancelLevelUp) {
+            $evolutionGrid = config('game.evolution_grid');
+            $scoreLoss = -$evolutionGrid[$this->level] ?? 0;
+            $newLevel = $this->level - 1;
+
+            $events[] = $this->buildEvent(
+                $scoreLoss,
+                EventType::LEVEL_CHANGE
+            );
+
+            $this->level = $newLevel;
         }
 
         if (isset($update->level) || (isset($update->levelUp) && $update->levelUp)) {

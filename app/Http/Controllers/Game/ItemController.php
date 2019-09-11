@@ -9,7 +9,6 @@ use App\Models\Common\PaginationParameters;
 use App\Models\Eloquent\EventType;
 use App\Models\Eloquent\Item;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class ItemController extends Controller
 {
@@ -40,7 +39,7 @@ class ItemController extends Controller
         $items = Item::offset($params->offset)
             ->limit($params->limit);
         $countQuery = Item::with('discoveredByPlayers')
-        ->with('adventureCompletedByPlayers')
+            ->with('adventureCompletedByPlayers')
         ;
 
         // Filter based on parameters

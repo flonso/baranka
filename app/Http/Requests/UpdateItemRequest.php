@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Helpers\RegexHelpers;
-use App\Models\Eloquent\Player;
+use App\Rules\CustomExists;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
@@ -35,11 +35,23 @@ class UpdateItemRequest extends BaseFormRequest
             ],
             'discoveredByPlayerIds' => [
                 'array',
-                'min:1'
+                'min:1',
+                function($attribute, $value, $fail) {
+                    if ($this->item->discovered === true) {
+                        $name = $this->item->name;
+                        $fail("$name a déjà été découvert(e)");
+                    }
+                }
             ],
             'adventureCompletedByPlayerIds' => [
                 'array',
-                'min:1'
+                'min:1',
+                function($attribute, $value, $fail) {
+                    if ($this->item->adventureCompleted === true) {
+                        $name = $this->item->name;
+                        $fail("L'aventure liée à $name est déjà terminée");
+                    }
+                }
             ]
         ];
 
@@ -49,11 +61,8 @@ class UpdateItemRequest extends BaseFormRequest
         if (isset($playerIds) && is_array($playerIds)) {
             foreach ($playerIds as $key => $id) {
                 $rules["discoveredByPlayerIds.$key"] = [
-                    Rule::exists('players', 'id')->where(function($query) use ($id) {
-                        return DB::table('players')
-                            ->where('code', '=', $id)
-                            ->orWhere('id', '=', $id)
-                        ;
+                    new CustomExists('players', function($query, $value) use ($id) {
+                        $query->where('id', '=', $id)->orWhere('code', '=', $id);
                     })
                 ];
             }
@@ -65,11 +74,8 @@ class UpdateItemRequest extends BaseFormRequest
         if (isset($playerIds) && is_array($playerIds)) {
             foreach ($playerIds as $key => $id) {
                 $rules["adventureCompletedByPlayerIds.$key"] = [
-                    Rule::exists('players', 'id')->where(function($query) use ($id) {
-                        DB::table('players')
-                            ->where('code', '=', $id)
-                            ->orWhere('id', '=', $id)
-                        ;
+                    new CustomExists('players', function($query, $value) {
+                        $query->where('id', '=', $value)->orWhere('code', '=', $value);
                     })
                 ];
             }
@@ -90,7 +96,7 @@ class UpdateItemRequest extends BaseFormRequest
 
         if (isset($this->discoveredByPlayerIds) && is_array($this->discoveredByPlayerIds)) {
             foreach ($this->discoveredByPlayerIds as $key => $id) {
-                $messages["discoveredByPlayerIds.$key.exists"] = "Il n'y a pas de joueur correspondant à l'identifiant '$id'";
+                $messages["discoveredByPlayerIds.$key.customExists"] = "Il n'y a pas de joueur correspondant à l'identifiant '$id'";
             }
         }
 
@@ -100,7 +106,7 @@ class UpdateItemRequest extends BaseFormRequest
             is_array($this->adventureCompletedByPlayerIds)
         ) {
             foreach ($this->adventureCompletedByPlayerIds as $key => $id) {
-                $messages["adventureCompletedByPlayerIds.$key.exists"] = "Il n'y a pas de joueur correspondant à l'identifiant '$id'";
+                $messages["adventureCompletedByPlayerIds.$key.customExists"] = "Il n'y a pas de joueur correspondant à l'identifiant '$id'";
             }
         }
 

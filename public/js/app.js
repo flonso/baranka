@@ -95051,12 +95051,14 @@ function handleError(error) {
 
   console.log(error.config);
 }
-function handleSuccess(response, modal) {
+function handleSuccess(response, modal, message) {
   if (typeof modal !== 'undefined') {
+    modal.find('select').select2('val', '');
+    modal.find('form').trigger('reset');
     modal.modal('hide');
   }
 
-  toast('Information', 'Données sauvegardées', 'success');
+  toast('Information', message ? message : 'Données sauvegardées', 'success');
 }
 function toast(title, message, type) {
   var clazz;
@@ -95201,13 +95203,26 @@ function bindQuestModal() {
   });
 }
 
+function bindLevelDownModal() {
+  bindFormSubmit('levelDownPlayerModal', function (modal, form) {
+    var playerId = form.find('#playerId').val();
+    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/players/".concat(playerId), {
+      "cancelLevelUp": true
+    }).then(function (r) {
+      var message = "".concat(r.data.first_name, " ").concat(r.data.last_name, " est maintenant au niveau ").concat(r.data.level);
+      handleSuccess(r, modal, message);
+    })["catch"](handleError);
+  });
+}
+
 function bindLevelUpModal() {
   bindFormSubmit('levelUpPlayerModal', function (modal, form) {
     var playerId = form.find('#playerId').val();
     axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/players/".concat(playerId), {
       "levelUp": true
     }).then(function (r) {
-      return handleSuccess(r, modal);
+      var message = "".concat(r.data.first_name, " ").concat(r.data.last_name, " est maintenant au niveau ").concat(r.data.level);
+      handleSuccess(r, modal, message);
     })["catch"](handleError);
   });
 }
@@ -95279,6 +95294,7 @@ function bindActions() {
   bindDiscoveredItem();
   bindQuestModal();
   bindLevelUpModal();
+  bindLevelDownModal();
   bindBoatPieceModal();
   bindAdventureCompletedModal();
   bindRegisterPlayerModal();
@@ -95317,6 +95333,8 @@ function initializeDataTables() {
       "data": "last_name"
     }, {
       "data": "group"
+    }, {
+      "data": "level"
     }, {
       "data": "score"
     }, {
@@ -95371,7 +95389,7 @@ var labelsMapping = {
   'board': "Mommand'Lou",
   'quest': 'Quêtes',
   'item': 'Objets et acheminement',
-  'level_change': 'Niveaux'
+  'level_change': 'Évolution'
 };
 var teamColors = {
   'contantinople': 'orange',
@@ -95382,7 +95400,7 @@ var teamColors = {
   'amsterdam': 'blue'
 };
 var timerInterval = undefined;
-var intervalInSeconds = 10;
+var intervalInSeconds = 300;
 function initGlobalRankChart() {
   var ctx = $('#globalRanks').get(0).getContext('2d');
   var options = {
@@ -95393,6 +95411,13 @@ function initGlobalRankChart() {
     },
     animation: {
       duration: 1000
+    },
+    scales: {
+      yAxes: [{
+        ticks: {
+          beginAtZero: true
+        }
+      }]
     }
   };
   var chart = new Chart(ctx, {
@@ -95415,6 +95440,13 @@ function initAllRanksChart() {
     },
     animation: {
       duration: 1000
+    },
+    scales: {
+      yAxes: [{
+        ticks: {
+          beginAtZero: true
+        }
+      }]
     }
   };
   var chart = new Chart(ctx, {
@@ -95455,7 +95487,7 @@ function refreshAllRanksChart(chart) {
         }
       };
     });
-    chart.data.labels = ["Mommand'Lou", 'Quêtes', 'Objets et acheminement', 'Niveaux'];
+    chart.data.labels = ["Mommand'Lou", 'Quêtes', 'Objets et acheminement', 'Évolutions'];
     chart.data.datasets = datasets;
     chart.update();
   });
@@ -95485,11 +95517,15 @@ function refreshGlobalRankChart(chart) {
 function initCharts() {
   var allRanksChart = initAllRanksChart();
   var globalRanksChart = initGlobalRankChart();
-  startTimer(intervalInSeconds, $('#timer'), function () {
+
+  var refresh = function refresh() {
     refreshGlobalRankChart(globalRanksChart);
     refreshAllRanksChart(allRanksChart);
     $('#lastRefreshedAt').text("Derni\xE8re mise \xE0 jour \xE0 ".concat(moment().format('HH:mm:ss')));
-  });
+  };
+
+  refresh();
+  startTimer(intervalInSeconds, $('#timer'), refresh);
 }
 
 function startTimer(duration, display, callback) {
