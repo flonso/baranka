@@ -7,7 +7,8 @@ return [
     5 => 20,
     6 => 35
   ],
-  'max_level' => 6
+  'max_level' => 6,
+  'level_up_interval_minutes' => 90
 ];
 
 ?>

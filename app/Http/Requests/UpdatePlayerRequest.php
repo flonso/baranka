@@ -3,6 +3,9 @@
 namespace App\Http\Requests;
 
 use App\Helpers\RegexHelpers;
+use App\Models\Eloquent\Event;
+use App\Models\Eloquent\EventType;
+use App\Models\Eloquent\Item;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
@@ -30,10 +33,37 @@ class UpdatePlayerRequest extends BaseFormRequest
                 'regex:' . RegexHelpers::FLOAT_REGEX
             ],
             'levelUp' => [
-                'boolean'
+                'boolean',
+                function($a, $v, $fail) {
+                    $minutes = config('game.level_up_interval_minutes', 0);
+                    $lastLevelUpEvent = Event::where('type', '=', EventType::LEVEL_CHANGE)
+                        ->orderBy('created_at', 'desc')
+                        ->limit(1)
+                        ->first();
+                    ;
+
+                    // If the value of the event is positive, then it is a level up
+                    // otherwise it is a cancellation of the level up and we can proceed
+                    $time = $lastLevelUpEvent->created_at->addMinutes($minutes)->toTimeString();
+                    if (
+                        $lastLevelUpEvent->value > 0 &&
+                        $lastLevelUpEvent->created_at->addMinutes($minutes)->greaterThan(now())
+                    ) {
+                        $fail(
+                            "La dernière augmentation de niveau a eu lieu il y a moins de $minutes minutes. La prochaine augmentation possible est à $time"
+                        );
+                    }
+                }
             ],
             'cancelLevelUp' => [
-                'boolean'
+                'boolean',
+                function($a, $v, $fail) {
+                    if ($this->player->level <= 1) {
+                        $fail(
+                            $this->player->first_name . "  " . $this->player->last_name . "est déjà au niveau minimum"
+                        );
+                    }
+                }
             ],
             'level' => [
                 'digits_between:1,2',

@@ -3,6 +3,11 @@
  */
 import Axios from 'axios';
 
+function resetForm(form) {
+  form.find('select').val([]).trigger('change')
+  form.trigger('reset')
+}
+
 export function handleError(error) {
   if (error.response) {
     const data = error.response.data
@@ -26,13 +31,12 @@ export function handleError(error) {
     // Something happened in setting up the request that triggered an Error
     toast('Une erreur inattendue est survenue', error.message, 'alert')
   }
-  console.log(error.config);
+  console.error('#### Error with request ####')
+  console.error(error.config);
 }
 
 export function handleSuccess(response, modal, message) {
   if (typeof modal !== 'undefined') {
-    modal.find('select').select2('val', '')
-    modal.find('form').trigger('reset')
     modal.modal('hide')
   }
   toast('Information', (message) ? message : 'Données sauvegardées', 'success')
@@ -81,16 +85,16 @@ function bindFormSubmit(containerId, onSubmitCallback) {
   const modal = $(`#${containerId}`)
   const form = modal.find('.modal-body form')
 
-  console.log('form = ', form)
-
   const submitButton = modal.find('.modal-footer button:not([data-dismiss])')
 
   // For submit on enter press
   form.append(
     '<input type="submit" style="position: absolute; left: -9999px"/>'
   )
-  submitButton.click(() => {
-    form.submit()
+  submitButton.click(() => form.submit())
+
+  modal.on('hidden.bs.modal', () => {
+    resetForm(form)
   })
 
   form.submit((event) => {
@@ -123,6 +127,7 @@ function bindItemSelect2(selector, filters) {
   $(selector).select2({
     placeholder: "Chercher un objet",
     width: '100%',
+    allowClear: true,
     ajax: {
       url: '/api/items',
       dataType: 'json',
@@ -132,7 +137,6 @@ function bindItemSelect2(selector, filters) {
         }
 
         Object.assign(finalParams, filters)
-        console.log(finalParams, filters)
 
         return finalParams
       },
@@ -155,6 +159,7 @@ function bindPlayerSelect2(selector, filters) {
   $(selector).select2({
     placeholder: "Chercher un joueur",
     width: '100%',
+    allowClear: true,
     ajax: {
       url: '/api/players',
       dataType: 'json',
@@ -164,7 +169,6 @@ function bindPlayerSelect2(selector, filters) {
         }
 
         Object.assign(finalParams, filters)
-        console.log(finalParams, filters)
 
         return finalParams
       },

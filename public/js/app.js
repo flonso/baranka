@@ -95026,6 +95026,12 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
  * Definitions of functions used in game.blade.php
  */
 
+
+function resetForm(form) {
+  form.find('select').val([]).trigger('change');
+  form.trigger('reset');
+}
+
 function handleError(error) {
   if (error.response) {
     var data = error.response.data;
@@ -95049,12 +95055,11 @@ function handleError(error) {
     toast('Une erreur inattendue est survenue', error.message, 'alert');
   }
 
-  console.log(error.config);
+  console.error('#### Error with request ####');
+  console.error(error.config);
 }
 function handleSuccess(response, modal, message) {
   if (typeof modal !== 'undefined') {
-    modal.find('select').select2('val', '');
-    modal.find('form').trigger('reset');
     modal.modal('hide');
   }
 
@@ -95087,12 +95092,14 @@ function toast(title, message, type) {
 function bindFormSubmit(containerId, onSubmitCallback) {
   var modal = $("#".concat(containerId));
   var form = modal.find('.modal-body form');
-  console.log('form = ', form);
   var submitButton = modal.find('.modal-footer button:not([data-dismiss])'); // For submit on enter press
 
   form.append('<input type="submit" style="position: absolute; left: -9999px"/>');
   submitButton.click(function () {
-    form.submit();
+    return form.submit();
+  });
+  modal.on('hidden.bs.modal', function () {
+    resetForm(form);
   });
   form.submit(function (event) {
     event.preventDefault();
@@ -95120,6 +95127,7 @@ function bindItemSelect2(selector, filters) {
   $(selector).select2({
     placeholder: "Chercher un objet",
     width: '100%',
+    allowClear: true,
     ajax: {
       url: '/api/items',
       dataType: 'json',
@@ -95128,7 +95136,6 @@ function bindItemSelect2(selector, filters) {
           query: params.term
         };
         Object.assign(finalParams, filters);
-        console.log(finalParams, filters);
         return finalParams;
       },
       processResults: function processResults(data) {
@@ -95149,6 +95156,7 @@ function bindPlayerSelect2(selector, filters) {
   $(selector).select2({
     placeholder: "Chercher un joueur",
     width: '100%',
+    allowClear: true,
     ajax: {
       url: '/api/players',
       dataType: 'json',
@@ -95157,7 +95165,6 @@ function bindPlayerSelect2(selector, filters) {
           query: params.term
         };
         Object.assign(finalParams, filters);
-        console.log(finalParams, filters);
         return finalParams;
       },
       processResults: function processResults(data) {

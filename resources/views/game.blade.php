@@ -53,17 +53,17 @@
 							type="button"
 							class="btn btn-block btn-primary"
 							data-toggle="modal"
-							data-target="#adventureCompletedModal"
+							data-target="#discoveredItemModal"
 						>
-							Enregistrer un certificat d'acheminement
+							Enregistrer un certificat de découverte
 						</button>
 						<button
 							type="button"
 							class="btn btn-block btn-primary"
 							data-toggle="modal"
-							data-target="#discoveredItemModal"
+							data-target="#adventureCompletedModal"
 						>
-							Enregistrer un certificat de découverte
+							Enregistrer un certificat d'acheminement
 						</button>
 					</div>
 				</div>
