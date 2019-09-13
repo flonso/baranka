@@ -21,7 +21,7 @@ PHP Requirements:
   - [x] Create with name, initial score and initial score multiplier
   - [x] Update with manual bonus/penalty on score and score multiplier
   - [x] Retrieve basic team information (name, current score and score multiplier)
-  - [ ] Retrieve the global team ranking based on points per event category
+  - [x] Retrieve the global team ranking based on points per event category
 - Players
   - [x] Create a player with first name, last name, team and an optional unique code identifier
   - [x] Update a player's level, score or code.
@@ -29,7 +29,7 @@ PHP Requirements:
     - [x] An id
     - [x] A code value
   - [x] Store additional player info
-  - [ ] Retrieve the global player ranking
+  - [x] Retrieve the global player ranking (this can be done by querying all players and sorting them by score)
 - Game phases
   - [x] Start a new game phase, possibility to give a custom phase number (to compute items' based on it)
   - [x] Stop a game phase
@@ -62,7 +62,7 @@ Then configure your environment file:
 
 `cp .env.example .env`
 
-And adapt the parameters to your local configuration with your text editor of choice.
+And adapt the parameters to your local configuration with your text editor of choice. Don't forget to generate a fresh key using `php artisan key:generate`.
 
 Run development server:
 
