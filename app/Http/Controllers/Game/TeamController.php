@@ -22,18 +22,27 @@ class TeamController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function list(Request $request) {
+
+        $query = $request->input('query');
+
         $params = new PaginationParameters(
             intval($request->input('page'))
         );
 
-        $query = DB::table('teams')
-            ->offset($params->offset)
+        $teams = Team::offset($params->offset)
             ->limit($params->limit)
         ;
+        $count = Team::select('*');
+
+        if (isset($query)) {
+            $teams->where('name', 'like', "%$query%");
+            $count->where('name', 'like', "%$query%");
+        }
+
 
         return response()->json([
-            'data' => $query->get(),
-            'count' => Team::count()
+            'data' => $teams->get(),
+            'count' => $count->count()
         ]);
     }
 

@@ -95078,7 +95078,8 @@ function toast(title, message, type) {
     clazz = 'text-success';
   }
 
-  var toast = $('<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">' + '<div class="toast-header">' + "<strong class=\"mr-auto\">".concat(title, "</strong>") + "<small class=\"text-muted\">\xC0 l'instant</small>" + "<button type=\"button\" class=\"ml-2 mb-1 close\" data-dismiss=\"toast\" aria-label=\"Fermer\">" + '<span aria-hidden="true">&times;</span>' + '</button>' + '</div>' + '<div class="toast-body">' + "<span class=\"".concat(clazz, "\">").concat(message, "</span>") + '</div>' + '</div>');
+  var toast = $('<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">' + '<div class="toast-header">' + "<strong class=\"mr-auto\">".concat(title, "</strong>") + // `<small class="text-muted">À l'instant</small>` +
+  "<button type=\"button\" class=\"ml-2 mb-1 close\" data-dismiss=\"toast\" aria-label=\"Fermer\">" + '<span aria-hidden="true">&times;</span>' + '</button>' + '</div>' + '<div class="toast-body">' + "<span class=\"".concat(clazz, "\">").concat(message, "</span>") + '</div>' + '</div>');
   $('#toastContainer').append(toast);
   toast.toast({
     delay: 5000
@@ -95112,7 +95113,10 @@ function bindMommandLouModal() {
     var playerId = form.find('#playerId').val();
     var pointsGained = form.find('#pointsGained').val();
 
-    if (_typeof(playerId) === undefined || _typeof(pointsGained) === undefined) {// Display error message
+    if (_typeof(playerId) === undefined || playerId.trim() == '') {
+      return toast('Erreur de formulaire', "L'identifiant du joueur est requis", 'alert');
+    } else if (_typeof(pointsGained) === undefined || pointsGained.trim() == '') {
+      return toast('Erreur de formulaire', "Merci d'indiquer le nombre de points gagnés", 'alert');
     }
 
     axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("/api/players/".concat(playerId), {
@@ -95123,61 +95127,81 @@ function bindMommandLouModal() {
   });
 }
 
-function bindItemSelect2(selector, filters) {
-  $(selector).select2({
-    placeholder: "Chercher un objet",
+function bindSelect2(options) {
+  $(options.selector).select2({
+    placeholder: options.placeholder,
     width: '100%',
     allowClear: true,
     ajax: {
-      url: '/api/items',
+      url: options.url,
       dataType: 'json',
       data: function data(params) {
         var finalParams = {
           query: params.term
         };
-        Object.assign(finalParams, filters);
+        Object.assign(finalParams, options.filters);
         return finalParams;
       },
-      processResults: function processResults(data) {
-        var processed = $.map(data.data, function (item) {
-          item.text = item.name;
-          return item;
-        });
-        return {
-          results: processed
-        };
-      },
-      cache: false
+      processResults: options.processResults,
+      cache: options.cache
     }
   });
 }
 
+function bindTeamSelect2(selector, filters) {
+  bindSelect2({
+    selector: selector,
+    placeholder: 'Chercher un équipage',
+    url: '/api/teams',
+    filters: filters,
+    processResults: function processResults(data) {
+      var processed = $.map(data.data, function (team) {
+        team.text = team.name;
+        return team;
+      });
+      return {
+        results: processed
+      };
+    },
+    cache: true
+  });
+}
+
+function bindItemSelect2(selector, filters) {
+  bindSelect2({
+    selector: selector,
+    placeholder: 'Chercher un objet',
+    url: '/api/items',
+    filters: filters,
+    processResults: function processResults(data) {
+      var processed = $.map(data.data, function (item) {
+        item.text = item.name;
+        return item;
+      });
+      return {
+        results: processed
+      };
+    },
+    cache: false
+  });
+}
+
 function bindPlayerSelect2(selector, filters) {
-  $(selector).select2({
-    placeholder: "Chercher un joueur",
-    width: '100%',
-    allowClear: true,
-    ajax: {
-      url: '/api/players',
-      dataType: 'json',
-      data: function data(params) {
-        var finalParams = {
-          query: params.term
-        };
-        Object.assign(finalParams, filters);
-        return finalParams;
-      },
-      processResults: function processResults(data) {
-        var processed = $.map(data.data, function (player) {
-          player.text = "".concat(player.first_name, " ").concat(player.last_name.toUpperCase(), " (").concat(player.group, ")");
-          return player;
-        });
-        return {
-          results: processed
-        };
-      },
-      cache: false
-    }
+  bindSelect2({
+    selector: selector,
+    placeholder: 'Chercher un joueur',
+    url: '/api/players',
+    filters: filters,
+    processResults: function processResults(data) {
+      var processed = $.map(data.data, function (player) {
+        player.text = "".concat(player.first_name, " ").concat(player.last_name.toUpperCase(), " (").concat(player.group, ")");
+        return player;
+      });
+      return {
+        results: processed
+      };
+    },
+    cache: false
   });
 }
 
@@ -95185,6 +95209,13 @@ function bindDiscoveredItem() {
   bindFormSubmit('discoveredItemModal', function (modal, form) {
     var itemId = form.find('select.select-item-id').val();
     var playerIds = form.find('#playerIds').val().split('\n');
+
+    if (_typeof(itemId) === undefined || itemId.trim() == '') {
+      return toast('Erreur de formulaire', "Merci d'indiquer l'objet découvert", 'alert');
+    } else if (_typeof(playerIds) === undefined || playerIds.count() == 0) {
+      return toast('Erreur de formulaire', "Merci d'indiquer au minimum un identifiant de joueur", 'alert');
+    }
+
     axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/items/".concat(itemId), {
       "discoveredByPlayerIds": playerIds
     }).then(function (r) {
@@ -95202,6 +95233,13 @@ function bindQuestModal() {
   bindFormSubmit('questModal', function (modal, form) {
     var playerId = form.find('#playerId').val();
     var pointsGained = form.find('#pointsGainedQuest').val();
+
+    if (_typeof(playerId) === undefined || playerId.trim() == '') {
+      return toast('Erreur de formulaire', "L'identifiant du joueur est requis", 'alert');
+    } else if (_typeof(pointsGained) === undefined || pointsGained.trim() == '') {
+      return toast('Erreur de formulaire', "Merci d'indiquer le nombre de points gagnés", 'alert');
+    }
+
     axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/players/".concat(playerId), {
       "gainedQuestPoints": pointsGained
     }).then(function (r) {
@@ -95213,6 +95251,11 @@ function bindQuestModal() {
 function bindLevelDownModal() {
   bindFormSubmit('levelDownPlayerModal', function (modal, form) {
     var playerId = form.find('#playerId').val();
+
+    if (_typeof(playerId) === undefined || playerId.trim() == '') {
+      return toast('Erreur de formulaire', "L'identifiant du joueur est requis", 'alert');
+    }
+
     axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/players/".concat(playerId), {
       "cancelLevelUp": true
     }).then(function (r) {
@@ -95225,6 +95268,11 @@ function bindLevelDownModal() {
 function bindLevelUpModal() {
   bindFormSubmit('levelUpPlayerModal', function (modal, form) {
     var playerId = form.find('#playerId').val();
+
+    if (_typeof(playerId) === undefined || playerId.trim() == '') {
+      return toast('Erreur de formulaire', "L'identifiant du joueur est requis", 'alert');
+    }
+
     axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/players/".concat(playerId), {
       "levelUp": true
     }).then(function (r) {
@@ -95238,6 +95286,13 @@ function bindBoatPieceModal() {
   bindFormSubmit('discoveredBoatModal', function (modal, form) {
     var playerId = form.find('#playerId').val();
     var itemId = form.find('select.select-item-id').val();
+
+    if (_typeof(playerId) === undefined || playerId.trim() == '') {
+      return toast('Erreur de formulaire', "L'identifiant du joueur est requis", 'alert');
+    } else if (_typeof(itemId) === undefined || itemId.trim() == '') {
+      return toast('Erreur de formulaire', "Merci d'indiquer la pièce de bâteau découverte", 'alert');
+    }
+
     axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/items/".concat(itemId), {
       "discoveredByPlayerIds": [playerId]
     }).then(function (r) {
@@ -95255,6 +95310,13 @@ function bindAdventureCompletedModal() {
   bindFormSubmit('adventureCompletedModal', function (modal, form) {
     var itemId = form.find('select.select-item-id').val();
     var playerIds = form.find('#playerIds').val().split('\n');
+
+    if (_typeof(itemId) === undefined || itemId.trim() == '') {
+      return toast('Erreur de formulaire', "Merci d'indiquer l'objet découvert", 'alert');
+    } else if (_typeof(playerIds) === undefined || playerIds.count() == 0) {
+      return toast('Erreur de formulaire', "Merci d'indiquer au minimum un identifiant de joueur", 'alert');
+    }
+
     axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/items/".concat(itemId), {
       "adventureCompletedByPlayerIds": playerIds
     }).then(function (r) {
@@ -95273,6 +95335,13 @@ function bindRegisterPlayerModal() {
   bindFormSubmit('registerPlayerModal', function (modal, form) {
     var playerId = form.find('select.select-player-id').val();
     var playerCode = form.find('#playerId').val();
+
+    if (_typeof(playerId) === undefined || playerId.trim() == '') {
+      return toast('Erreur de formulaire', "Merci de sélectionner un joueur", 'alert');
+    } else if (_typeof(playerCode) === undefined || playerCode.trim() == '') {
+      return toast('Erreur de formulaire', "Merci d'indiquer le numéro de talisman du joueur", 'alert');
+    }
+
     axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/players/".concat(playerId), {
       "code": playerCode
     }).then(function (r) {
@@ -95286,14 +95355,58 @@ function bindRegisterPlayerModal() {
 
 function bindManualPointsModal(containerId) {
   bindFormSubmit(containerId, function (modal, form) {
+    var teamId = form.find('select').val();
     var playerId = form.find('#playerId').val();
     var points = form.find('#pointsInput').val();
-    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/players/".concat(playerId), {
+    var radioChoice = form.find('input[name=teamOrPlayer][type=radio]');
+    var teamOrPlayerMode = radioChoice.length > 1;
+    var applyOnTeam = radioChoice.filter(':checked').val() === "teamPoints";
+    var url = "/api/teams/".concat(teamId);
+
+    if (teamOrPlayerMode && !applyOnTeam) {
+      url = "/api/players/".concat(playerId);
+    }
+
+    if (teamOrPlayerMode && applyOnTeam || !teamOrPlayerMode) {
+      if (_typeof(teamId) === undefined || teamId.trim() == '') {
+        return toast('Erreur de formulaire', "Merci de sélectionner un équipage", 'alert');
+      }
+    } else if (teamOrPlayerMode && !applyOnTeam) {
+      if (_typeof(playerId) === undefined || playerId.trim() == '') {
+        return toast('Erreur de formulaire', "L'identifiant du joueur est requis", 'alert');
+      }
+    }
+
+    if (_typeof(points) === undefined || points.trim() == '') {
+      return toast('Erreur de formulaire', "Merci d'indiquer le nombre de points gagnés/perdus", 'alert');
+    }
+
+    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch(url, {
       "scoreIncrement": points
     }).then(function (r) {
       return handleSuccess(r, modal);
     })["catch"](handleError);
   });
+  var container = $("#".concat(containerId));
+  var playerInputField = container.find('form #playerInputField');
+  var teamInputField = container.find('form #teamInputField');
+  teamInputField.hide();
+  var radios = container.find('form input[type=radio][name=teamOrPlayer]');
+  container.find('form').on('reset', function () {
+    playerInputField.show();
+    teamInputField.hide();
+  });
+  console.log(container, radios);
+  radios.change(function () {
+    if (this.value === 'teamPoints') {
+      playerInputField.hide();
+      teamInputField.show();
+    } else {
+      playerInputField.show();
+      teamInputField.hide();
+    }
+  });
+  bindTeamSelect2("#".concat(containerId, " select"));
 }
 
 function bindActions() {

@@ -134,7 +134,8 @@ class Player extends BaseModel
         if (isset($update->scoreIncrement)) {
             $events[] = $this->buildEvent(
                 $update->scoreIncrement,
-                EventType::MANUAL_POINTS
+                EventType::MANUAL_POINTS,
+                true
             );
 
             $this->score += $update->scoreIncrement;
@@ -190,12 +191,12 @@ class Player extends BaseModel
         return $events;
     }
 
-    private function buildEvent($value, $type) {
+    private function buildEvent($value, $type, $playerOnly = false) {
         return Event::build(
             $value,
             $type,
             $this->id,
-            $this->team_id
+            (!$playerOnly) ? $this->team_id : null
         );
     }
 }

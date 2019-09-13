@@ -119,17 +119,18 @@ class PlayerController extends Controller
                     $player->score += $event->value;
                     $team->score += $event->value;
                 break;
-                case EventType::MANUAL_POINTS:
                 case EventType::QUEST:
                 case EventType::BOARD:
                     // Player score is already updated, the team's isn't
                     $team->score += $event->value;
                 break;
                 default:
-                    // Skipped
+                    // Skipped (manual points are only applied to player)
 
             }
-            $models[] = $team;
+            if (isset($team)) {
+                $models[] = $team;
+            }
         }
 
         return $this->persistModels(

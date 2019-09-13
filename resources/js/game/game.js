@@ -58,7 +58,7 @@ export function toast(title, message, type) {
     '<div class="toast" role="alert" aria-live="assertive" aria-atomic="true">' +
       '<div class="toast-header">' +
         `<strong class="mr-auto">${title}</strong>` +
-        `<small class="text-muted">À l'instant</small>` +
+        // `<small class="text-muted">À l'instant</small>` +
         `<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Fermer">` +
           '<span aria-hidden="true">&times;</span>' +
         '</button>' +
@@ -108,8 +108,10 @@ function bindMommandLouModal() {
     const playerId = form.find('#playerId').val()
     const pointsGained = form.find('#pointsGained').val()
 
-    if (typeof playerId === undefined || typeof pointsGained === undefined) {
-      // Display error message
+    if (typeof playerId === undefined || playerId.trim() == '') {
+      return toast('Erreur de formulaire', "L'identifiant du joueur est requis", 'alert')
+    } else if (typeof pointsGained === undefined || pointsGained.trim() == '') {
+      return toast('Erreur de formulaire', "Merci d'indiquer le nombre de points gagnés", 'alert')
     }
 
     Axios.patch(
@@ -123,67 +125,86 @@ function bindMommandLouModal() {
   });
 }
 
-function bindItemSelect2(selector, filters) {
-  $(selector).select2({
-    placeholder: "Chercher un objet",
+function bindSelect2(options) {
+  $(options.selector).select2({
+    placeholder: options.placeholder,
     width: '100%',
     allowClear: true,
     ajax: {
-      url: '/api/items',
+      url: options.url,
       dataType: 'json',
       data: (params) => {
         let finalParams = {
           query: params.term
         }
 
-        Object.assign(finalParams, filters)
+        Object.assign(finalParams, options.filters)
 
         return finalParams
       },
-      processResults: (data) => {
-        const processed = $.map(data.data, (item) => {
-          item.text = item.name
-
-          return item
-        })
-        return {
-          results: processed
-        }
-      },
-      cache: false
+      processResults: options.processResults,
+      cache: options.cache
     }
   })
 }
 
+function bindTeamSelect2(selector, filters) {
+  bindSelect2({
+    selector: selector,
+    placeholder: 'Chercher un équipage',
+    url: '/api/teams',
+    filters: filters,
+    processResults: (data) => {
+      const processed = $.map(data.data, (team) => {
+        team.text = team.name
+
+        return team
+      })
+      return {
+        results: processed
+      }
+    },
+    cache: true
+  })
+}
+
+function bindItemSelect2(selector, filters) {
+  bindSelect2({
+    selector: selector,
+    placeholder: 'Chercher un objet',
+    url: '/api/items',
+    filters: filters,
+    processResults: (data) => {
+      const processed = $.map(data.data, (item) => {
+        item.text = item.name
+
+        return item
+      })
+      return {
+        results: processed
+      }
+    },
+    cache: false
+  })
+}
+
 function bindPlayerSelect2(selector, filters) {
-  $(selector).select2({
-    placeholder: "Chercher un joueur",
-    width: '100%',
-    allowClear: true,
-    ajax: {
-      url: '/api/players',
-      dataType: 'json',
-      data: (params) => {
-        let finalParams = {
-          query: params.term
-        }
+  bindSelect2({
+    selector: selector,
+    placeholder: 'Chercher un joueur',
+    url: '/api/players',
+    filters: filters,
+    processResults: (data) => {
+      const processed = $.map(data.data, (player) => {
+        player.text = `${player.first_name} ${player.last_name.toUpperCase()} (${player.group})`
 
-        Object.assign(finalParams, filters)
-
-        return finalParams
-      },
-      processResults: (data) => {
-        const processed = $.map(data.data, (player) => {
-          player.text = `${player.first_name} ${player.last_name.toUpperCase()} (${player.group})`
-
-          return player
-        })
-        return {
-          results: processed
-        }
-      },
-      cache: false
-    }
+        return player
+      })
+      return {
+        results: processed
+      }
+    },
+    cache: false
   })
 }
 
@@ -191,6 +212,12 @@ function bindDiscoveredItem() {
   bindFormSubmit('discoveredItemModal', (modal, form) => {
     const itemId = form.find('select.select-item-id').val()
     const playerIds = form.find('#playerIds').val().split('\n')
+
+    if (typeof itemId === undefined || itemId.trim() == '') {
+      return toast('Erreur de formulaire', "Merci d'indiquer l'objet découvert", 'alert')
+    } else if (typeof playerIds === undefined || playerIds.count() == 0) {
+      return toast('Erreur de formulaire', "Merci d'indiquer au minimum un identifiant de joueur", 'alert')
+    }
 
     Axios.patch(
       `api/items/${itemId}`,
@@ -216,6 +243,12 @@ function bindQuestModal() {
     const playerId = form.find('#playerId').val()
     const pointsGained = form.find('#pointsGainedQuest').val()
 
+    if (typeof playerId === undefined || playerId.trim() == '') {
+      return toast('Erreur de formulaire', "L'identifiant du joueur est requis", 'alert')
+    } else if (typeof pointsGained === undefined || pointsGained.trim() == '') {
+      return toast('Erreur de formulaire', "Merci d'indiquer le nombre de points gagnés", 'alert')
+    }
+
     Axios.patch(
       `api/players/${playerId}`,
       {
@@ -231,6 +264,10 @@ function bindQuestModal() {
 function bindLevelDownModal() {
   bindFormSubmit('levelDownPlayerModal', (modal, form) => {
     const playerId = form.find('#playerId').val()
+
+    if (typeof playerId === undefined || playerId.trim() == '') {
+      return toast('Erreur de formulaire', "L'identifiant du joueur est requis", 'alert')
+    }
 
     Axios.patch(
       `api/players/${playerId}`,
@@ -249,6 +286,10 @@ function bindLevelDownModal() {
 function bindLevelUpModal() {
   bindFormSubmit('levelUpPlayerModal', (modal, form) => {
     const playerId = form.find('#playerId').val()
+
+    if (typeof playerId === undefined || playerId.trim() == '') {
+      return toast('Erreur de formulaire', "L'identifiant du joueur est requis", 'alert')
+    }
 
     Axios.patch(
       `api/players/${playerId}`,
@@ -269,6 +310,11 @@ function bindBoatPieceModal() {
     const playerId = form.find('#playerId').val()
     const itemId = form.find('select.select-item-id').val()
 
+    if (typeof playerId === undefined || playerId.trim() == '') {
+      return toast('Erreur de formulaire', "L'identifiant du joueur est requis", 'alert')
+    } else if (typeof itemId === undefined || itemId.trim() == '') {
+      return toast('Erreur de formulaire', "Merci d'indiquer la pièce de bâteau découverte", 'alert')
+    }
 
     Axios.patch(
       `api/items/${itemId}`,
@@ -293,6 +339,13 @@ function bindAdventureCompletedModal() {
   bindFormSubmit('adventureCompletedModal', (modal, form) => {
     const itemId = form.find('select.select-item-id').val()
     const playerIds = form.find('#playerIds').val().split('\n')
+
+    if (typeof itemId === undefined || itemId.trim() == '') {
+      return toast('Erreur de formulaire', "Merci d'indiquer l'objet découvert", 'alert')
+    } else if (typeof playerIds === undefined || playerIds.count() == 0) {
+      return toast('Erreur de formulaire', "Merci d'indiquer au minimum un identifiant de joueur", 'alert')
+    }
+
 
     Axios.patch(
       `api/items/${itemId}`,
@@ -319,6 +372,12 @@ function bindRegisterPlayerModal() {
     const playerId = form.find('select.select-player-id').val()
     const playerCode = form.find('#playerId').val()
 
+    if (typeof playerId === undefined || playerId.trim() == '') {
+      return toast('Erreur de formulaire', "Merci de sélectionner un joueur", 'alert')
+    } else if (typeof playerCode === undefined || playerCode.trim() == '') {
+      return toast('Erreur de formulaire', "Merci d'indiquer le numéro de talisman du joueur", 'alert')
+    }
+
     Axios.patch(
       `api/players/${playerId}`,
       {
@@ -339,11 +398,38 @@ function bindRegisterPlayerModal() {
 
 function bindManualPointsModal(containerId) {
   bindFormSubmit(containerId, (modal, form) => {
+    const teamId = form.find('select').val()
     const playerId = form.find('#playerId').val()
     const points = form.find('#pointsInput').val()
 
+    const radioChoice = form.find('input[name=teamOrPlayer][type=radio]')
+    const teamOrPlayerMode = radioChoice.length > 1
+    const applyOnTeam = radioChoice.filter(':checked').val() === "teamPoints"
+
+    let url = `/api/teams/${teamId}`
+    if (teamOrPlayerMode && !applyOnTeam) {
+      url =  `/api/players/${playerId}`
+    }
+
+    if (
+      (teamOrPlayerMode && applyOnTeam) ||
+      !teamOrPlayerMode
+    ){
+      if (typeof teamId === undefined || teamId.trim() == '') {
+        return toast('Erreur de formulaire', "Merci de sélectionner un équipage", 'alert')
+      }
+    } else if (teamOrPlayerMode && !applyOnTeam) {
+      if (typeof playerId === undefined || playerId.trim() == '') {
+        return toast('Erreur de formulaire', "L'identifiant du joueur est requis", 'alert')
+      }
+    }
+
+    if (typeof points === undefined || points.trim() == '') {
+      return toast('Erreur de formulaire', "Merci d'indiquer le nombre de points gagnés/perdus", 'alert')
+    }
+
     Axios.patch(
-      `api/players/${playerId}`,
+      url,
       {
         "scoreIncrement": points
       }
@@ -351,6 +437,31 @@ function bindManualPointsModal(containerId) {
       (r) => handleSuccess(r, modal)
     ).catch(handleError)
   })
+
+  const container = $(`#${containerId}`)
+  const playerInputField = container.find('form #playerInputField')
+  const teamInputField = container.find('form #teamInputField')
+  teamInputField.hide()
+
+  const radios = container.find('form input[type=radio][name=teamOrPlayer]')
+  container.find('form').on('reset', () => {
+    playerInputField.show()
+    teamInputField.hide()
+  })
+
+  console.log(container, radios)
+  radios.change(function() {
+    if (this.value === 'teamPoints') {
+      playerInputField.hide()
+      teamInputField.show()
+    } else {
+      playerInputField.show()
+      teamInputField.hide()
+    }
+  })
+
+
+  bindTeamSelect2(`#${containerId} select`)
 }
 
 export function bindActions() {

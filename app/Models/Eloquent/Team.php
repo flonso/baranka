@@ -137,13 +137,13 @@ class Team extends BaseModel
             $event = new Event();
             $event->value = $update->scoreIncrement;
             $event->type = EventType::MANUAL_POINTS;
+            $event->team()->associate($this->id);
             $events[] = $event;
 
             $this->score += $update->scoreIncrement;
         }
 
         if (isset($update->scoreMultiplierIncrement)) {
-
             $this->score_multiplier += $update->scoreMultiplierIncrement;
         }
 

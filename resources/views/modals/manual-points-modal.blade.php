@@ -9,7 +9,28 @@
 
 
   <form>
-    @component('helpers/player-id-input') @endcomponent
+    <div>Appliquer les points sur: </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="teamOrPlayer" id="playerPoints" value="playerPoints" checked>
+      <label class="form-check-label" for="playerPoints">
+        Un joueur
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="teamOrPlayer" id="teamPoints" value="teamPoints">
+      <label class="form-check-label" for="teamPoints">
+        Un équipage
+      </label>
+    </div>
+
+    <div id="playerInputField">
+      @component('helpers/player-id-input') @endcomponent
+    </div>
+
+    <div id="teamInputField">
+      @component('helpers/select') @endcomponent
+    </div>
+
     @component('helpers/points-input')
       @slot('title') Points bonus / malus @endslot
       @slot('placeholder') Entrer un nombre @endslot
