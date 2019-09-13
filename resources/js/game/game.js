@@ -114,11 +114,16 @@ function bindMommandLouModal() {
       return toast('Erreur de formulaire', "Merci d'indiquer le nombre de points gagnés", 'alert')
     }
 
+    const params = {
+      "gainedBoardPoints": pointsGained
+    }
+    console.log(
+      `Calling route : /api/players/${playerId} with parameters: `,
+      params
+    )
     Axios.patch(
       `/api/players/${playerId}`,
-      {
-        "gainedBoardPoints": pointsGained
-      }
+      params
     ).then(
       (r) => handleSuccess(r, modal)
     ).catch(handleError)
@@ -219,11 +224,16 @@ function bindDiscoveredItem() {
       return toast('Erreur de formulaire', "Merci d'indiquer au minimum un identifiant de joueur", 'alert')
     }
 
+    const params = {
+      "discoveredByPlayerIds": playerIds
+    }
+    console.log(
+      `Calling route : api/items/${itemId} with parameters: `,
+      params
+    )
     Axios.patch(
       `api/items/${itemId}`,
-      {
-        "discoveredByPlayerIds": playerIds
-      }
+      params
     ).then(
       (r) => handleSuccess(r, modal)
     ).catch(handleError)
@@ -249,11 +259,16 @@ function bindQuestModal() {
       return toast('Erreur de formulaire', "Merci d'indiquer le nombre de points gagnés", 'alert')
     }
 
+    const params = {
+      "gainedQuestPoints": pointsGained
+    }
+    console.log(
+      `Calling route : api/players/${playerId} with parameters: `,
+      params
+    )
     Axios.patch(
       `api/players/${playerId}`,
-      {
-        "gainedQuestPoints": pointsGained
-      }
+      params
     ).then(
       (r) => handleSuccess(r, modal)
     ).catch(handleError)
@@ -269,11 +284,16 @@ function bindLevelDownModal() {
       return toast('Erreur de formulaire', "L'identifiant du joueur est requis", 'alert')
     }
 
+    const params = {
+      "cancelLevelUp": true
+    }
+    console.log(
+      `Calling route : api/players/${playerId} with parameters: `,
+      params
+    )
     Axios.patch(
       `api/players/${playerId}`,
-      {
-        "cancelLevelUp": true
-      }
+      params
     ).then(
       (r) => {
         const message = `${r.data.first_name} ${r.data.last_name} est maintenant au niveau ${r.data.level}`
@@ -291,11 +311,16 @@ function bindLevelUpModal() {
       return toast('Erreur de formulaire', "L'identifiant du joueur est requis", 'alert')
     }
 
+    const params = {
+      "levelUp": true
+    }
+    console.log(
+      `Calling route : api/players/${playerId} with parameters: `,
+      params
+    )
     Axios.patch(
       `api/players/${playerId}`,
-      {
-        "levelUp": true
-      }
+      params
     ).then(
       (r) => {
         const message = `${r.data.first_name} ${r.data.last_name} est maintenant au niveau ${r.data.level}`
@@ -316,11 +341,16 @@ function bindBoatPieceModal() {
       return toast('Erreur de formulaire', "Merci d'indiquer la pièce de bâteau découverte", 'alert')
     }
 
+    const params = {
+      "discoveredByPlayerIds": [playerId]
+    }
+    console.log(
+      `Calling route : api/items/${itemId} with parameters: `,
+      params
+    )
     Axios.patch(
       `api/items/${itemId}`,
-      {
-        "discoveredByPlayerIds": [playerId]
-      }
+      params
     ).then(
       (r) => handleSuccess(r, modal)
     ).catch(handleError)
@@ -347,11 +377,16 @@ function bindAdventureCompletedModal() {
     }
 
 
+    const params = {
+      "adventureCompletedByPlayerIds": playerIds
+    }
+    console.log(
+      `Calling route : api/items/${itemId} with parameters: `,
+      params
+    )
     Axios.patch(
       `api/items/${itemId}`,
-      {
-        "adventureCompletedByPlayerIds": playerIds
-      }
+      params
     ).then(
       (r) => handleSuccess(r, modal)
     ).catch(handleError)
@@ -378,11 +413,16 @@ function bindRegisterPlayerModal() {
       return toast('Erreur de formulaire', "Merci d'indiquer le numéro de talisman du joueur", 'alert')
     }
 
+    const params = {
+      "code": playerCode
+    }
+    console.log(
+      `Calling route : api/players/${playerId} with parameters: `,
+      params
+    )
     Axios.patch(
       `api/players/${playerId}`,
-      {
-        "code": playerCode
-      }
+      params
     ).then(
       (r) => handleSuccess(r, modal)
     ).catch(handleError)
@@ -427,12 +467,16 @@ function bindManualPointsModal(containerId) {
     if (typeof points === undefined || points.trim() == '') {
       return toast('Erreur de formulaire', "Merci d'indiquer le nombre de points gagnés/perdus", 'alert')
     }
+    const params = {
+      "scoreIncrement": points
+    }
 
+    console.log(
+      params  `Calling route ${url} with parameters`,
+    )
     Axios.patch(
       url,
-      {
-        "scoreIncrement": points
-      }
+      params
     ).then(
       (r) => handleSuccess(r, modal)
     ).catch(handleError)
@@ -449,7 +493,6 @@ function bindManualPointsModal(containerId) {
     teamInputField.hide()
   })
 
-  console.log(container, radios)
   radios.change(function() {
     if (this.value === 'teamPoints') {
       playerInputField.hide()

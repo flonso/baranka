@@ -95020,6 +95020,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bindActions", function() { return bindActions; });
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+function _templateObject() {
+  var data = _taggedTemplateLiteral(["Calling route ", " with parameters"]);
+
+  _templateObject = function _templateObject() {
+    return data;
+  };
+
+  return data;
+}
+
+function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
+
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /**
@@ -95119,9 +95131,11 @@ function bindMommandLouModal() {
       return toast('Erreur de formulaire', "Merci d'indiquer le nombre de points gagnés", 'alert');
     }
 
-    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("/api/players/".concat(playerId), {
+    var params = {
       "gainedBoardPoints": pointsGained
-    }).then(function (r) {
+    };
+    console.log("Calling route : /api/players/".concat(playerId, " with parameters: "), params);
+    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("/api/players/".concat(playerId), params).then(function (r) {
       return handleSuccess(r, modal);
     })["catch"](handleError);
   });
@@ -95216,9 +95230,11 @@ function bindDiscoveredItem() {
       return toast('Erreur de formulaire', "Merci d'indiquer au minimum un identifiant de joueur", 'alert');
     }
 
-    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/items/".concat(itemId), {
+    var params = {
       "discoveredByPlayerIds": playerIds
-    }).then(function (r) {
+    };
+    console.log("Calling route : api/items/".concat(itemId, " with parameters: "), params);
+    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/items/".concat(itemId), params).then(function (r) {
       return handleSuccess(r, modal);
     })["catch"](handleError);
   });
@@ -95240,9 +95256,11 @@ function bindQuestModal() {
       return toast('Erreur de formulaire', "Merci d'indiquer le nombre de points gagnés", 'alert');
     }
 
-    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/players/".concat(playerId), {
+    var params = {
       "gainedQuestPoints": pointsGained
-    }).then(function (r) {
+    };
+    console.log("Calling route : api/players/".concat(playerId, " with parameters: "), params);
+    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/players/".concat(playerId), params).then(function (r) {
       return handleSuccess(r, modal);
     })["catch"](handleError);
   });
@@ -95256,9 +95274,11 @@ function bindLevelDownModal() {
       return toast('Erreur de formulaire', "L'identifiant du joueur est requis", 'alert');
     }
 
-    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/players/".concat(playerId), {
+    var params = {
       "cancelLevelUp": true
-    }).then(function (r) {
+    };
+    console.log("Calling route : api/players/".concat(playerId, " with parameters: "), params);
+    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/players/".concat(playerId), params).then(function (r) {
       var message = "".concat(r.data.first_name, " ").concat(r.data.last_name, " est maintenant au niveau ").concat(r.data.level);
       handleSuccess(r, modal, message);
     })["catch"](handleError);
@@ -95273,9 +95293,11 @@ function bindLevelUpModal() {
       return toast('Erreur de formulaire', "L'identifiant du joueur est requis", 'alert');
     }
 
-    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/players/".concat(playerId), {
+    var params = {
       "levelUp": true
-    }).then(function (r) {
+    };
+    console.log("Calling route : api/players/".concat(playerId, " with parameters: "), params);
+    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/players/".concat(playerId), params).then(function (r) {
       var message = "".concat(r.data.first_name, " ").concat(r.data.last_name, " est maintenant au niveau ").concat(r.data.level);
       handleSuccess(r, modal, message);
     })["catch"](handleError);
@@ -95293,9 +95315,11 @@ function bindBoatPieceModal() {
       return toast('Erreur de formulaire', "Merci d'indiquer la pièce de bâteau découverte", 'alert');
     }
 
-    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/items/".concat(itemId), {
+    var params = {
       "discoveredByPlayerIds": [playerId]
-    }).then(function (r) {
+    };
+    console.log("Calling route : api/items/".concat(itemId, " with parameters: "), params);
+    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/items/".concat(itemId), params).then(function (r) {
       return handleSuccess(r, modal);
     })["catch"](handleError);
   });
@@ -95317,9 +95341,11 @@ function bindAdventureCompletedModal() {
       return toast('Erreur de formulaire', "Merci d'indiquer au minimum un identifiant de joueur", 'alert');
     }
 
-    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/items/".concat(itemId), {
+    var params = {
       "adventureCompletedByPlayerIds": playerIds
-    }).then(function (r) {
+    };
+    console.log("Calling route : api/items/".concat(itemId, " with parameters: "), params);
+    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/items/".concat(itemId), params).then(function (r) {
       return handleSuccess(r, modal);
     })["catch"](handleError);
   });
@@ -95342,9 +95368,11 @@ function bindRegisterPlayerModal() {
       return toast('Erreur de formulaire', "Merci d'indiquer le numéro de talisman du joueur", 'alert');
     }
 
-    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/players/".concat(playerId), {
+    var params = {
       "code": playerCode
-    }).then(function (r) {
+    };
+    console.log("Calling route : api/players/".concat(playerId, " with parameters: "), params);
+    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch("api/players/".concat(playerId), params).then(function (r) {
       return handleSuccess(r, modal);
     })["catch"](handleError);
   });
@@ -95381,9 +95409,11 @@ function bindManualPointsModal(containerId) {
       return toast('Erreur de formulaire', "Merci d'indiquer le nombre de points gagnés/perdus", 'alert');
     }
 
-    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch(url, {
+    var params = {
       "scoreIncrement": points
-    }).then(function (r) {
+    };
+    console.log(params(_templateObject(), url));
+    axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch(url, params).then(function (r) {
       return handleSuccess(r, modal);
     })["catch"](handleError);
   });
@@ -95396,7 +95426,6 @@ function bindManualPointsModal(containerId) {
     playerInputField.show();
     teamInputField.hide();
   });
-  console.log(container, radios);
   radios.change(function () {
     if (this.value === 'teamPoints') {
       playerInputField.hide();
