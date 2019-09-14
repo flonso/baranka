@@ -94995,7 +94995,16 @@ function updateDisplay() {
         $('#currentPhase').text("Aucune phase de jeu n'a \xE9t\xE9 lanc\xE9e pour le moment");
       }
     }
-  })["catch"](_game__WEBPACK_IMPORTED_MODULE_1__["handleError"]);
+  })["catch"](function (r) {
+    if (r.response.status === 404 && r.response.data.code == 9000) {
+      $('#startGamePhaseButton').attr('disabled', false);
+      $('#stopGamePhaseButton').attr('disabled', true);
+      $('#currentPhase').text("Aucune phase de jeu n'a \xE9t\xE9 lanc\xE9e pour le moment");
+    } else {
+      console.log(r);
+      Object(_game__WEBPACK_IMPORTED_MODULE_1__["handleError"])(r);
+    }
+  });
 }
 function bindAdminDashboard() {
   bindStartGamePhase();
@@ -95189,21 +95198,28 @@ function bindItemSelect2(selector, filters) {
 }
 
 function bindPlayerSelect2(selector, filters) {
-  bindSelect2({
-    selector: selector,
-    placeholder: 'Chercher un joueur',
-    url: '/api/players',
-    filters: filters,
-    processResults: function processResults(data) {
-      var processed = $.map(data.data, function (player) {
-        player.text = "".concat(player.first_name, " ").concat(player.last_name.toUpperCase(), " (").concat(player.group, ")");
-        return player;
-      });
-      return {
-        results: processed
-      };
-    },
-    cache: false
+  axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/teams").then(function (r) {
+    var teams = r.data.data;
+    bindSelect2({
+      selector: selector,
+      placeholder: 'Chercher un joueur',
+      url: '/api/players',
+      filters: filters,
+      processResults: function processResults(data) {
+        var processed = $.map(data.data, function (player) {
+          console.log(teams);
+          var teamName = teams.find(function (t) {
+            return t.id === player.team_id;
+          }).name;
+          player.text = "".concat(player.first_name, " ").concat(player.last_name.toUpperCase(), " (").concat(player.group, " - ").concat(teamName, ")");
+          return player;
+        });
+        return {
+          results: processed
+        };
+      },
+      cache: false
+    });
   });
 }
 
@@ -95597,6 +95613,14 @@ function initAllRanksChart() {
   });
   return chart;
 }
+
+function getColorForTeam(name) {
+  var colorIndex = Object.keys(teamColors).find(function (n) {
+    return name.toLocaleLowerCase().indexOf(n) >= 0;
+  });
+  return teamColors[colorIndex];
+}
+
 function refreshAllRanksChart(chart) {
   axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/teams/rankings").then(function (r) {
     var data = r.data;
@@ -95611,12 +95635,14 @@ function refreshAllRanksChart(chart) {
       var points = originalData.map(function (d) {
         return d.score;
       });
+      var color = getColorForTeam(team.name);
       return {
         label: team.name,
         originalData: originalData,
         data: points,
-        backgroundColor: team.team_id === 1 ? 'orange' : 'green',
+        backgroundColor: color,
         borderColor: 'grey',
+        borderWidth: 1,
         datalabels: {
           color: 'black',
           anchor: 'end',
@@ -95625,7 +95651,9 @@ function refreshAllRanksChart(chart) {
         }
       };
     });
-    chart.data.labels = ["Mommand'Lou", 'Quêtes', 'Objets et acheminement', 'Évolutions'];
+    chart.data.labels = keys.map(function (k) {
+      return labelsMapping[k];
+    });
     chart.data.datasets = datasets;
     chart.update();
   });
@@ -95634,11 +95662,13 @@ function refreshGlobalRankChart(chart) {
   axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("/api/teams/rankings/global").then(function (r) {
     var teams = r.data;
     var datasets = teams.map(function (team) {
+      var color = getColorForTeam(team.name);
       return {
         label: team.name,
         data: [team.score],
-        backgroundColor: team.id === 1 ? 'orange' : 'green',
+        backgroundColor: color,
         borderColor: 'grey',
+        borderWidth: 1,
         datalabels: {
           color: 'black',
           anchor: 'end',
@@ -95708,7 +95738,6 @@ function bindRankTable() {
       data: "total"
     }]
   });
-  console.log(table);
   return table;
 }
 
@@ -95726,8 +95755,7 @@ function initCharts() {
 
   refresh();
   startTimer(intervalInSeconds, $('#timer'), refresh);
-  $('#rankingCarousel').on('slide.bs.carousel', function () {
-    return console.log('hello');
+  $('#rankingCarousel').on('slide.bs.carousel', function () {// Could add a progress bar here
   });
 }
 

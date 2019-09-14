@@ -37,6 +37,7 @@ class UpdatePlayerRequest extends BaseFormRequest
                 function($a, $v, $fail) {
                     $minutes = config('game.level_up_interval_minutes', 0);
                     $lastLevelUpEvent = Event::where('type', '=', EventType::LEVEL_CHANGE)
+                        ->where('player_id', '=', $this->player->id)
                         ->orderBy('created_at', 'desc')
                         ->limit(1)
                         ->first();
@@ -44,11 +45,13 @@ class UpdatePlayerRequest extends BaseFormRequest
 
                     // If the value of the event is positive, then it is a level up
                     // otherwise it is a cancellation of the level up and we can proceed
-                    $time = $lastLevelUpEvent->created_at->addMinutes($minutes)->toTimeString();
                     if (
+                        $lastLevelUpEvent &&
                         $lastLevelUpEvent->value > 0 &&
                         $lastLevelUpEvent->created_at->addMinutes($minutes)->greaterThan(now())
                     ) {
+                        $time = $lastLevelUpEvent->created_at->addMinutes($minutes)->toTimeString();
+
                         $fail(
                             "La dernière augmentation de niveau a eu lieu il y a moins de $minutes minutes. La prochaine augmentation possible est à $time"
                         );

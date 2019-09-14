@@ -53,7 +53,19 @@ export function updateDisplay() {
         }
       }
     }
-  ).catch(handleError)
+  ).catch(r => {
+    if (r.response.status === 404 && r.response.data.code == 9000) {
+      $('#startGamePhaseButton').attr('disabled', false)
+      $('#stopGamePhaseButton').attr('disabled', true)
+
+      $('#currentPhase').text(
+        `Aucune phase de jeu n'a été lancée pour le moment`
+      )
+    } else {
+      console.log(r)
+      handleError(r)
+    }
+  })
 }
 
 export function bindAdminDashboard() {

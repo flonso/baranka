@@ -114,6 +114,7 @@ class Team extends BaseModel
                 $s->name = $team->name;
                 $s->score = 0;
                 $s->gainedPoints = 0;
+                $s->score_multiplier = $team->score_multiplier;
                 $s->type = $type;
                 $ranks[$type] += 1;
                 $s->rank = $ranks[$type];

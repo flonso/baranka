@@ -194,22 +194,28 @@ function bindItemSelect2(selector, filters) {
 }
 
 function bindPlayerSelect2(selector, filters) {
-  bindSelect2({
-    selector: selector,
-    placeholder: 'Chercher un joueur',
-    url: '/api/players',
-    filters: filters,
-    processResults: (data) => {
-      const processed = $.map(data.data, (player) => {
-        player.text = `${player.first_name} ${player.last_name.toUpperCase()} (${player.group})`
+  Axios.get(`/api/teams`).then((r) => {
+    const teams = r.data.data
 
-        return player
-      })
-      return {
-        results: processed
-      }
-    },
-    cache: false
+    bindSelect2({
+      selector: selector,
+      placeholder: 'Chercher un joueur',
+      url: '/api/players',
+      filters: filters,
+      processResults: (data) => {
+        const processed = $.map(data.data, (player) => {
+          console.log(teams);
+          const teamName = teams.find(t => t.id === player.team_id).name
+          player.text = `${player.first_name} ${player.last_name.toUpperCase()} (${player.group} - ${teamName})`
+
+          return player
+        })
+        return {
+          results: processed
+        }
+      },
+      cache: false
+    })
   })
 }
 

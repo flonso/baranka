@@ -82,6 +82,14 @@ export function initAllRanksChart() {
   return chart
 }
 
+function getColorForTeam(name) {
+  const colorIndex = Object.keys(teamColors).find((n) => {
+    return name.toLocaleLowerCase().indexOf(n) >= 0
+  })
+
+  return teamColors[colorIndex]
+}
+
 export function refreshAllRanksChart(chart) {
   Axios.get(
     `/api/teams/rankings`
@@ -95,13 +103,15 @@ export function refreshAllRanksChart(chart) {
         return data[key].find(t => t.team_id === team.team_id)
       })
       const points = originalData.map(d => d.score)
+      const color = getColorForTeam(team.name)
 
       return {
         label: team.name,
         originalData: originalData,
         data: points,
-        backgroundColor: (team.team_id === 1) ? 'orange' : 'green',
+        backgroundColor: color,
         borderColor: 'grey',
+        borderWidth: 1,
         datalabels: {
           color: 'black',
           anchor: 'end',
@@ -111,12 +121,7 @@ export function refreshAllRanksChart(chart) {
       }
     })
 
-    chart.data.labels = [
-      `Mommand'Lou`,
-      'Quêtes',
-      'Objets et acheminement',
-      'Évolutions'
-    ]
+    chart.data.labels = keys.map(k => labelsMapping[k])
 
     chart.data.datasets = datasets
 
@@ -132,11 +137,14 @@ export function refreshGlobalRankChart(chart) {
     const teams = r.data
 
     const datasets = teams.map((team) => {
+      const color = getColorForTeam(team.name)
+
       return {
         label: team.name,
         data: [team.score],
-        backgroundColor: (team.id === 1) ? 'orange' : 'green',
+        backgroundColor: color,
         borderColor: 'grey',
+        borderWidth: 1,
         datalabels: {
           color: 'black',
           anchor: 'end',
@@ -204,7 +212,6 @@ function bindRankTable() {
         { data: "total"}
     ]
   })
-  console.log(table)
 
   return table
 }
@@ -226,7 +233,9 @@ export function initCharts() {
 
   refresh()
   startTimer(intervalInSeconds, $('#timer'), refresh)
-  $('#rankingCarousel').on('slide.bs.carousel', () => console.log('hello'))
+  $('#rankingCarousel').on('slide.bs.carousel', () => {
+    // Could add a progress bar here
+  })
 }
 
 
