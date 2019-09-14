@@ -41,7 +41,8 @@ export function initializeDataTables() {
     buttons.off('click')
     buttons.click((event) => {
       event.preventDefault();
-      const textarea = $(event.target).parent('form').find('textarea')
+
+      const textarea = $(event.target).parents('form').find('textarea')
       const playerId = textarea.data('id')
       let comments = textarea.val()
       comments = (comments && comments.trim()) ? comments.trim() : null

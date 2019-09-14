@@ -95504,7 +95504,7 @@ function initializeDataTables() {
     buttons.off('click');
     buttons.click(function (event) {
       event.preventDefault();
-      var textarea = $(event.target).parent('form').find('textarea');
+      var textarea = $(event.target).parents('form').find('textarea');
       var playerId = textarea.data('id');
       var comments = textarea.val();
       comments = comments && comments.trim() ? comments.trim() : null;
@@ -95697,7 +95697,7 @@ function fetchRankTableData(data, callback, settings) {
 
         rows[rank.team_id][rank.type] = rank.type === 'manual_points' ? rank.score : rank.gainedPoints;
         rows[rank.team_id]['name'] = rank.name;
-        rows[rank.team_id]['total'] += rank.gainedPoints;
+        rows[rank.team_id]['total'] += rank.type === 'manual_points' ? rank.score : rank.gainedPoints;
         rows[rank.team_id]['score_multiplier'] = rank.score_multiplier;
       });
     });

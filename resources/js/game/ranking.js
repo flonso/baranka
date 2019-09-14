@@ -177,7 +177,7 @@ export function fetchRankTableData(data, callback, settings) {
         }
         rows[rank.team_id][rank.type] = (rank.type === 'manual_points') ? rank.score : rank.gainedPoints
         rows[rank.team_id]['name'] = rank.name
-        rows[rank.team_id]['total'] += rank.gainedPoints
+        rows[rank.team_id]['total'] += (rank.type === 'manual_points') ?  rank.score : rank.gainedPoints
         rows[rank.team_id]['score_multiplier'] = rank.score_multiplier
       })
     })

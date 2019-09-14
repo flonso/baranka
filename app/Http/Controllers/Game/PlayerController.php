@@ -14,6 +14,7 @@ use App\Models\Eloquent\Team;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PlayerController extends Controller
 {
@@ -109,6 +110,7 @@ class PlayerController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(UpdatePlayerRequest $update, Player $player) {
+        Log::debug("Updating player id = '$player->id', code = '$player->code'");
         $events = $player->updateFromData($update);
         $models = [$player];
 

@@ -15,7 +15,7 @@
 
 @section('content')
   <!-- carousel-fade -->
-  <div id="rankingCarousel" class="carousel slide" data-ride="carousel" data-interval="3000">
+  <div id="rankingCarousel" class="carousel slide" data-ride="carousel" data-interval="30000">
     <div class="carousel-inner">
       <div class="carousel-item active">
         <canvas id="allRankings" class="d-block w-100"></canvas>

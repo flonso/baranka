@@ -4,7 +4,10 @@ namespace App\Models\Eloquent;
 
 use App\Exceptions\ApiExceptions;
 use App\Http\Requests\UpdatePlayerRequest;
+use Illuminate\Log\Logger as IlluminateLogger;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Monolog\Logger;
 
 class Player extends BaseModel
 {
@@ -48,15 +51,36 @@ class Player extends BaseModel
     public static function findByCodeOrId($idOrCode) {
         $query = null;
         $isCollection = is_array($idOrCode);
+
         if ($isCollection) {
-            $query = Player::whereIn('code', $idOrCode)
-                ->orWhere('id', $idOrCode)
+            $ids = [];
+            $codes = [];
+            foreach ($idOrCode as $i) {
+                if (intval($idOrCode)."" === "$idOrCode") {
+                    $ids[] = intval($idOrCode);
+                } else {
+                    $codes[] = "$idOrCode";
+                }
+            }
+            $query = Player::whereIn('id', $ids)
+                ->orWhereIn('code', $codes)
             ;
         } else {
-            $query = Player::where('code', '=', $idOrCode)
-                ->orWhere('id', '=', $idOrCode)
-            ;
+            if (intval($idOrCode)."" === "$idOrCode") {
+                $query = Player::where('id', '=', $idOrCode);
+            } else {
+                $query = Player::where('code', '=', $idOrCode);
+            }
         }
+
+        DB::listen(function($query) {
+            Log::debug($query->sql);
+            $bindings = '';
+            foreach ($query->bindings as $b) {
+                $bindings .= $b . ",";
+            }
+            Log::debug($bindings);
+        });
 
         return ($isCollection) ? $query->get() : $query->first();
     }
