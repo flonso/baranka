@@ -10,17 +10,19 @@
 
   <form>
     <div>Appliquer les points sur: </div>
-    <div class="form-check">
-      <input class="form-check-input" type="radio" name="teamOrPlayer" id="playerPoints" value="playerPoints" checked>
-      <label class="form-check-label" for="playerPoints">
-        Un joueur
-      </label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="radio" name="teamOrPlayer" id="teamPoints" value="teamPoints">
-      <label class="form-check-label" for="teamPoints">
-        Un équipage
-      </label>
+    <div style="display: flex; justify-content: space-between">
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="teamOrPlayer" id="playerPoints" value="playerPoints" checked>
+        <label class="form-check-label" for="playerPoints">
+          Un joueur
+        </label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="teamOrPlayer" id="teamPoints" value="teamPoints">
+        <label class="form-check-label" for="teamPoints">
+          Un équipage
+        </label>
+      </div>
     </div>
 
     <div id="playerInputField">

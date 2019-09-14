@@ -100,12 +100,22 @@ class TeamController extends Controller
      * Returns the ranking for each category of event in the game.
      */
     public function rankings(Request $request) {
+        $includeManualPoints = filter_var(
+            $request->input('includeManualPoints'),
+            FILTER_VALIDATE_BOOLEAN
+        );
+
         $eventTypes =  [
             EventType::ITEM,
             EventType::LEVEL_CHANGE,
             EventType::QUEST,
             EventType::BOARD
         ];
+
+        if ($includeManualPoints === true) {
+            $eventTypes[] = EventType::MANUAL_POINTS;
+        }
+
         $rankings = Team::getAllScoresForEventTypes(
             $eventTypes
         );

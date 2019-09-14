@@ -95020,18 +95020,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bindActions", function() { return bindActions; });
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
-function _templateObject() {
-  var data = _taggedTemplateLiteral(["Calling route ", " with parameters"]);
-
-  _templateObject = function _templateObject() {
-    return data;
-  };
-
-  return data;
-}
-
-function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
-
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /**
@@ -95412,7 +95400,7 @@ function bindManualPointsModal(containerId) {
     var params = {
       "scoreIncrement": points
     };
-    console.log(params(_templateObject(), url));
+    console.log("Calling route ".concat(url, " with parameters"), params);
     axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch(url, params).then(function (r) {
       return handleSuccess(r, modal);
     })["catch"](handleError);
@@ -95519,7 +95507,7 @@ function initializeDataTables() {
 /*!**************************************!*\
   !*** ./resources/js/game/ranking.js ***!
   \**************************************/
-/*! exports provided: initGlobalRankChart, initAllRanksChart, refreshAllRanksChart, refreshGlobalRankChart, initCharts */
+/*! exports provided: initGlobalRankChart, initAllRanksChart, refreshAllRanksChart, refreshGlobalRankChart, fetchRankTableData, initCharts */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -95528,6 +95516,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "initAllRanksChart", function() { return initAllRanksChart; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "refreshAllRanksChart", function() { return refreshAllRanksChart; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "refreshGlobalRankChart", function() { return refreshGlobalRankChart; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fetchRankTableData", function() { return fetchRankTableData; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "initCharts", function() { return initCharts; });
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
@@ -95663,18 +95652,83 @@ function refreshGlobalRankChart(chart) {
     chart.update();
   });
 }
+function fetchRankTableData(data, callback, settings) {
+  axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("api/teams/rankings?includeManualPoints=true").then(function (response) {
+    var data = response.data;
+    var rows = [];
+    var keys = Object.keys(data);
+    keys.map(function (key) {
+      var ranks = data[key];
+      ranks.forEach(function (rank) {
+        if (typeof rows[rank.team_id] === 'undefined') {
+          rows[rank.team_id] = {};
+          rows[rank.team_id]['total'] = 0;
+        }
+
+        rows[rank.team_id][rank.type] = rank.type === 'manual_points' ? rank.score : rank.gainedPoints;
+        rows[rank.team_id]['name'] = rank.name;
+        rows[rank.team_id]['total'] += rank.gainedPoints;
+        rows[rank.team_id]['score_multiplier'] = rank.score_multiplier;
+      });
+    });
+    rows = rows.map(function (row) {
+      row['total'] *= row['score_multiplier'];
+      return row;
+    }).filter(function (v) {
+      return typeof v !== 'undefined';
+    });
+    console.log('rows are', rows, JSON.stringify(rows));
+    return callback({
+      data: rows
+    });
+  });
+}
+
+function bindRankTable() {
+  var table = $('#tableRankings').DataTable({
+    ajax: fetchRankTableData,
+    paging: false,
+    searchable: false,
+    deferRender: true,
+    columns: [{
+      data: "name"
+    }, {
+      data: "board"
+    }, {
+      data: "quest"
+    }, {
+      data: "item"
+    }, {
+      data: "level_change"
+    }, {
+      data: "manual_points"
+    }, {
+      data: "score_multiplier"
+    }, {
+      data: "total"
+    }]
+  });
+  console.log(table);
+  return table;
+}
+
 function initCharts() {
   var allRanksChart = initAllRanksChart();
   var globalRanksChart = initGlobalRankChart();
+  var table = bindRankTable();
 
   var refresh = function refresh() {
     refreshGlobalRankChart(globalRanksChart);
     refreshAllRanksChart(allRanksChart);
+    table.ajax.reload();
     $('#lastRefreshedAt').text("Derni\xE8re mise \xE0 jour \xE0 ".concat(moment().format('HH:mm:ss')));
   };
 
   refresh();
   startTimer(intervalInSeconds, $('#timer'), refresh);
+  $('#rankingCarousel').on('slide.bs.carousel', function () {
+    return console.log('hello');
+  });
 }
 
 function startTimer(duration, display, callback) {

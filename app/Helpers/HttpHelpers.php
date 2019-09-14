@@ -56,7 +56,10 @@ class HttpHelpers {
   public static function getClient() {
     if (self::$client == null) {
       self::$client = new Client([
-        'base_uri' => self::getBaseUri()
+        'base_uri' => self::getBaseUri(),
+        'headers' => [
+          'Accept' => 'application/json'
+        ]
       ]);
     }
 

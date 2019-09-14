@@ -155,12 +155,69 @@ export function refreshGlobalRankChart(chart) {
   })
 }
 
+export function fetchRankTableData(data, callback, settings) {
+  Axios.get("api/teams/rankings?includeManualPoints=true").then((response) => {
+    const data = response.data
+    let rows = [];
+    const keys = Object.keys(data)
+    keys.map((key) => {
+      const ranks = data[key]
+      ranks.forEach((rank) => {
+        if (typeof rows[rank.team_id] === 'undefined') {
+          rows[rank.team_id] = {}
+          rows[rank.team_id]['total'] = 0
+        }
+        rows[rank.team_id][rank.type] = (rank.type === 'manual_points') ? rank.score : rank.gainedPoints
+        rows[rank.team_id]['name'] = rank.name
+        rows[rank.team_id]['total'] += rank.gainedPoints
+        rows[rank.team_id]['score_multiplier'] = rank.score_multiplier
+      })
+    })
+
+    rows = rows.map((row) => {
+      row['total'] *= row['score_multiplier']
+      return row
+    }).filter(v => typeof v !== 'undefined')
+
+    console.log('rows are', rows, JSON.stringify(rows))
+
+    return callback({
+      data: rows
+    })
+  })
+}
+
+function bindRankTable() {
+  const table = $('#tableRankings').DataTable( {
+    ajax: fetchRankTableData,
+    paging: false,
+    searchable: false,
+    deferRender: true,
+    columns: [
+        { data: "name"},
+        { data: "board" },
+        { data: "quest" },
+        { data: "item" },
+        { data: "level_change" },
+        { data: "manual_points"},
+        { data: "score_multiplier" },
+        { data: "total"}
+    ]
+  })
+  console.log(table)
+
+  return table
+}
+
 export function initCharts() {
   const allRanksChart = initAllRanksChart()
   const globalRanksChart = initGlobalRankChart()
+  const table = bindRankTable()
+
   const refresh = () => {
     refreshGlobalRankChart(globalRanksChart)
     refreshAllRanksChart(allRanksChart)
+    table.ajax.reload()
 
     $('#lastRefreshedAt').text(
       `Dernière mise à jour à ${moment().format('HH:mm:ss')}`
@@ -169,7 +226,9 @@ export function initCharts() {
 
   refresh()
   startTimer(intervalInSeconds, $('#timer'), refresh)
+  $('#rankingCarousel').on('slide.bs.carousel', () => console.log('hello'))
 }
+
 
 function startTimer(duration, display, callback) {
   if (typeof timerInterval !== undefined) {

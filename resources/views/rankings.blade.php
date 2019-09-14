@@ -14,24 +14,48 @@
 @endsection
 
 @section('content')
-  <div class="row" style="max-height: 40%;">
-    <div class="col-sm">
-      <canvas id="allRankings">
-      </canvas>
+  <!-- carousel-fade -->
+  <div id="rankingCarousel" class="carousel slide" data-ride="carousel" data-interval="3000">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <canvas id="allRankings" class="d-block w-100"></canvas>
+      </div>
+      <div class="carousel-item">
+        <table class="table table-striped table-bordered" style="width: 100%" id="tableRankings">
+          <thead>
+            <tr>
+              <th scope="col">Équipage</th>
+              <th scope="col">Mommand'lou</th>
+              <th scope="col">Quêtes</th>
+              <th scope="col">Objets</th>
+              <th scope="col">Évolution</th>
+              <th scope="col">Bonus/Malus</th>
+              <th scope="col">Pièce de Bâteau</th>
+              <th scope="col">Points de prestige</th>
+            </tr>
+          </thead>
+        </table>
+        <div class="text-danger">
+          <p>
+            (Mommand'Lou + Quêtes + Objets/Acheminement + Évolution + Bonus/Malus) * Pièces de Bâteau = Points de prestige
+          </p>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <canvas id="globalRanks"  class="d-block w-100"></canvas>
+      </div>
     </div>
   </div>
-  <hr/>
-  <div class="row" style="max-height: 40%;">
-    <div class="col-sm">
-      <canvas id="globalRanks">
-      </canvas>
-    </div>
-  </div>
+  <!--<div class="progress" style="height: 4px;">
+    <div class="progress-bar bg-info" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" id="progressBar"></div>
+  </div>-->
 @endsection
 
 @section('scripts')
   @parent
   <script>
-    ranking.initCharts()
+    $(document).ready(() => {
+      ranking.initCharts()
+    })
   </script>
 @endsection

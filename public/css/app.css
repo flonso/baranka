@@ -10662,3 +10662,8 @@ div.dataTables_wrapper {
   width: 100%;
 }
 
+#tableRankings_filter,
+#tableRankings_info {
+  display: none;
+}
+

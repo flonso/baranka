@@ -71,7 +71,7 @@ class Team extends BaseModel
 
     public static function getAllScoresForEventTypes(array $types) {
         $allTeamScores = DB::table('events')
-            ->selectRaw("events.team_id, teams.name, sum(value) as score, type")
+            ->selectRaw("events.team_id, teams.name, teams.score_multiplier, sum(value) as score, type")
             ->join("teams", "events.team_id", "=", "teams.id")
             ->whereIn('type', $types)
             ->groupBy("type", "team_id")

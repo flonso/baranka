@@ -472,7 +472,8 @@ function bindManualPointsModal(containerId) {
     }
 
     console.log(
-      params  `Calling route ${url} with parameters`,
+      `Calling route ${url} with parameters`,
+      params
     )
     Axios.patch(
       url,
