@@ -56,10 +56,10 @@ class Player extends BaseModel
             $ids = [];
             $codes = [];
             foreach ($idOrCode as $i) {
-                if (intval($idOrCode)."" === "$idOrCode") {
-                    $ids[] = intval($idOrCode);
+                if (intval($i)."" === "$i") {
+                    $ids[] = intval($i);
                 } else {
-                    $codes[] = "$idOrCode";
+                    $codes[] = "$i";
                 }
             }
             $query = Player::whereIn('id', $ids)
@@ -205,6 +205,9 @@ class Player extends BaseModel
                 EventType::LEVEL_CHANGE
             );
 
+            Log::debug(
+                "[$this->team_id] Will level up player $this->id ($this->code) from level $$this->level to $newLevel"
+            );
             $this->level = $newLevel;
         }
 

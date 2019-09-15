@@ -10663,7 +10663,26 @@ div.dataTables_wrapper {
 }
 
 #tableRankings_filter,
-#tableRankings_info {
+#tableRankings_info,
+#clanRankings_filter,
+#clanRankings_info {
   display: none;
+}
+
+#rankingCarousel.ipad-static {
+  margin: auto;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#rankingCarousel.ipad-static div {
+  width: 100%;
+}
+
+#rankingCarousel.ipad-static div img {
+  width: 100%;
+  height: auto;
+  max-height: 100vh;
 }
 

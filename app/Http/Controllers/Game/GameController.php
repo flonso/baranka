@@ -80,4 +80,35 @@ class GameController extends Controller {
             500
         );
     }
+
+    public function clans() {
+        return response()->json([
+            "data" => [
+                [
+                    "name" => "Sept Mers",
+                    "points" => 232
+                ],
+                [
+                    "name" => "Tricornes des Sables",
+                    "points" => 210
+                ],
+                [
+                    "name" => "Flibustiers du Cap",
+                    "points" => 103
+                ],
+                [
+                    "name" => "Crânes Rouges",
+                    "points" => 90
+                ],
+                [
+                    "name" => "Requins Noirs",
+                    "points" => 88
+                ],
+                [
+                    "name" => "Oeil du Singe",
+                    "points" => 0
+                ]
+            ]
+        ]);
+    }
 }

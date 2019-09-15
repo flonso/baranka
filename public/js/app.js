@@ -95230,7 +95230,7 @@ function bindDiscoveredItem() {
 
     if (_typeof(itemId) === undefined || itemId.trim() == '') {
       return toast('Erreur de formulaire', "Merci d'indiquer l'objet découvert", 'alert');
-    } else if (_typeof(playerIds) === undefined || playerIds.count() == 0) {
+    } else if (_typeof(playerIds) === undefined || playerIds.length == 0) {
       return toast('Erreur de formulaire', "Merci d'indiquer au minimum un identifiant de joueur", 'alert');
     }
 
@@ -95341,7 +95341,7 @@ function bindAdventureCompletedModal() {
 
     if (_typeof(itemId) === undefined || itemId.trim() == '') {
       return toast('Erreur de formulaire', "Merci d'indiquer l'objet découvert", 'alert');
-    } else if (_typeof(playerIds) === undefined || playerIds.count() == 0) {
+    } else if (_typeof(playerIds) === undefined || playerIds.length == 0) {
       return toast('Erreur de formulaire', "Merci d'indiquer au minimum un identifiant de joueur", 'alert');
     }
 
@@ -95546,10 +95546,10 @@ var labelsMapping = {
   'level_change': 'Évolution'
 };
 var teamColors = {
-  'contantinople': 'orange',
+  'constantinople': 'orange',
   'cardiff': 'white',
   'brest': 'green',
-  'shangai': 'red',
+  'shanghai': 'red',
   'almeria': 'yellow',
   'amsterdam': 'blue'
 };
@@ -95632,10 +95632,14 @@ function refreshAllRanksChart(chart) {
           return t.team_id === team.team_id;
         });
       });
+      var color = getColorForTeam(team.name);
       var points = originalData.map(function (d) {
+        if (d.type === 'quest' || d.type === 'board') {
+          return d.score * 10;
+        }
+
         return d.score;
       });
-      var color = getColorForTeam(team.name);
       return {
         label: team.name,
         originalData: originalData,
@@ -95665,7 +95669,7 @@ function refreshGlobalRankChart(chart) {
       var color = getColorForTeam(team.name);
       return {
         label: team.name,
-        data: [team.score],
+        data: [Math.round(team.score)],
         backgroundColor: color,
         borderColor: 'grey',
         borderWidth: 1,
@@ -95703,6 +95707,7 @@ function fetchRankTableData(data, callback, settings) {
     });
     rows = rows.map(function (row) {
       row['total'] *= row['score_multiplier'];
+      row['total'] = Math.round(row['total']);
       return row;
     }).filter(function (v) {
       return typeof v !== 'undefined';
@@ -95741,15 +95746,32 @@ function bindRankTable() {
   return table;
 }
 
+function bindClanRankTable() {
+  var table = $('#clanRankings').DataTable({
+    ajax: '/api/game/clans',
+    paging: false,
+    searchable: false,
+    deferRender: true,
+    columns: [{
+      data: "name"
+    }, {
+      data: "points"
+    }]
+  });
+  return table;
+}
+
 function initCharts() {
   var allRanksChart = initAllRanksChart();
   var globalRanksChart = initGlobalRankChart();
   var table = bindRankTable();
+  var clanTable = bindClanRankTable();
 
   var refresh = function refresh() {
     refreshGlobalRankChart(globalRanksChart);
     refreshAllRanksChart(allRanksChart);
     table.ajax.reload();
+    clanTable.ajax.reload();
     $('#lastRefreshedAt').text("Derni\xE8re mise \xE0 jour \xE0 ".concat(moment().format('HH:mm:ss')));
   };
 

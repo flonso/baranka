@@ -63,6 +63,7 @@ class Item extends BaseModel
         $currentPhaseNumber = GamePhase::current()->number;
         $points = $this->discovery_points;
         $points -= floor(max(0, $currentPhaseNumber - $this->discoverable_from_phase) / 2) * 100;
+        $points = max(0, $points); // Points should not become negative...
 
         return $points;
     }

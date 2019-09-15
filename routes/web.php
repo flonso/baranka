@@ -22,3 +22,4 @@ Route::get("/players", 'PlayersViewController@get');
 Route::get("/items", 'ItemsViewController@get');
 
 Route::get('/rankings', 'RankingViewController@get');
+Route::get('/static-rankings', 'RankingViewController@staticGet');

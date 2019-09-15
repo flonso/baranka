@@ -38,3 +38,5 @@ Route::post('/teams/{team}/players/{playerId}', 'TeamController@addPlayer');
 Route::get('/game/status', 'GameController@status');
 Route::post('/game/start', 'GameController@start');
 Route::post('/game/stop', 'GameController@stop');
+
+Route::get('/game/clans', 'GameController@clans');

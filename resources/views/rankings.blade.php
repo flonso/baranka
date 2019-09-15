@@ -15,7 +15,7 @@
 
 @section('content')
   <!-- carousel-fade -->
-  <div id="rankingCarousel" class="carousel slide" data-ride="carousel" data-interval="30000">
+  <div id="rankingCarousel" class="carousel slide" data-ride="carousel" data-interval="20000">
     <div class="carousel-inner">
       <div class="carousel-item active">
         <canvas id="allRankings" class="d-block w-100"></canvas>
@@ -43,6 +43,17 @@
       </div>
       <div class="carousel-item">
         <canvas id="globalRanks"  class="d-block w-100"></canvas>
+      </div>
+
+      <div class="carousel-item">
+        <table class="table table-striped table-bordered" style="width: 100%" id="clanRankings">
+          <thead>
+            <tr>
+              <th scope="col">Clan</th>
+              <th scope="col">Points</th>
+            </tr>
+          </thead>
+        </table>
       </div>
     </div>
   </div>

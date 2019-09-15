@@ -226,7 +226,7 @@ function bindDiscoveredItem() {
 
     if (typeof itemId === undefined || itemId.trim() == '') {
       return toast('Erreur de formulaire', "Merci d'indiquer l'objet découvert", 'alert')
-    } else if (typeof playerIds === undefined || playerIds.count() == 0) {
+    } else if (typeof playerIds === undefined || playerIds.length == 0) {
       return toast('Erreur de formulaire', "Merci d'indiquer au minimum un identifiant de joueur", 'alert')
     }
 
@@ -378,7 +378,7 @@ function bindAdventureCompletedModal() {
 
     if (typeof itemId === undefined || itemId.trim() == '') {
       return toast('Erreur de formulaire', "Merci d'indiquer l'objet découvert", 'alert')
-    } else if (typeof playerIds === undefined || playerIds.count() == 0) {
+    } else if (typeof playerIds === undefined || playerIds.length == 0) {
       return toast('Erreur de formulaire', "Merci d'indiquer au minimum un identifiant de joueur", 'alert')
     }
 

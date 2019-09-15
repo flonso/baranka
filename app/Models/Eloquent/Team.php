@@ -97,9 +97,9 @@ class Team extends BaseModel
             $s->rank = $ranks[$type];
 
             if ($type == EventType::QUEST) {
-                $s->gainedPoints = 350 - ($s->rank - 1) * 70;
+                $s->gainedPoints = round(350 - ($s->rank - 1) * 70, 2);
             } else {
-                $s->gainedPoints = 1000 - ($s->rank - 1) * 200;
+                $s->gainedPoints = round(1000 - ($s->rank - 1) * 200, 2);
             }
 
             $rankingByCategory[$type][] = $s;

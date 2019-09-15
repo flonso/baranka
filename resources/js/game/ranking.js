@@ -7,10 +7,10 @@ const labelsMapping = {
   'level_change': 'Évolution'
 }
 const teamColors = {
-  'contantinople': 'orange',
+  'constantinople': 'orange',
   'cardiff': 'white',
   'brest': 'green',
-  'shangai': 'red',
+  'shanghai': 'red',
   'almeria': 'yellow',
   'amsterdam': 'blue'
 }
@@ -98,12 +98,21 @@ export function refreshAllRanksChart(chart) {
 
     const keys = Object.keys(data)
     const teams = data[keys[0]]
+
     const datasets = teams.map((team) => {
       const originalData = keys.map((key) => {
         return data[key].find(t => t.team_id === team.team_id)
       })
-      const points = originalData.map(d => d.score)
+
       const color = getColorForTeam(team.name)
+      const points = originalData.map(d => {
+
+        if (d.type === 'quest' || d.type === 'board') {
+          return d.score * 10
+        }
+
+        return d.score
+      })
 
       return {
         label: team.name,
@@ -141,7 +150,7 @@ export function refreshGlobalRankChart(chart) {
 
       return {
         label: team.name,
-        data: [team.score],
+        data: [Math.round(team.score)],
         backgroundColor: color,
         borderColor: 'grey',
         borderWidth: 1,
@@ -184,6 +193,7 @@ export function fetchRankTableData(data, callback, settings) {
 
     rows = rows.map((row) => {
       row['total'] *= row['score_multiplier']
+      row['total'] = Math.round(row['total'])
       return row
     }).filter(v => typeof v !== 'undefined')
 
@@ -216,15 +226,32 @@ function bindRankTable() {
   return table
 }
 
+function bindClanRankTable() {
+  const table = $('#clanRankings').DataTable({
+    ajax: '/api/game/clans',
+    paging: false,
+    searchable: false,
+    deferRender: true,
+    columns: [
+      { data: "name" },
+      { data: "points" }
+    ]
+  })
+
+  return table
+}
+
 export function initCharts() {
   const allRanksChart = initAllRanksChart()
   const globalRanksChart = initGlobalRankChart()
   const table = bindRankTable()
+  const clanTable = bindClanRankTable()
 
   const refresh = () => {
     refreshGlobalRankChart(globalRanksChart)
     refreshAllRanksChart(allRanksChart)
     table.ajax.reload()
+    clanTable.ajax.reload()
 
     $('#lastRefreshedAt').text(
       `Dernière mise à jour à ${moment().format('HH:mm:ss')}`
