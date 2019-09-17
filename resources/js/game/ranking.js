@@ -226,32 +226,15 @@ function bindRankTable() {
   return table
 }
 
-function bindClanRankTable() {
-  const table = $('#clanRankings').DataTable({
-    ajax: '/api/game/clans',
-    paging: false,
-    searchable: false,
-    deferRender: true,
-    columns: [
-      { data: "name" },
-      { data: "points" }
-    ]
-  })
-
-  return table
-}
-
 export function initCharts() {
   const allRanksChart = initAllRanksChart()
   const globalRanksChart = initGlobalRankChart()
   const table = bindRankTable()
-  const clanTable = bindClanRankTable()
 
   const refresh = () => {
     refreshGlobalRankChart(globalRanksChart)
     refreshAllRanksChart(allRanksChart)
     table.ajax.reload()
-    clanTable.ajax.reload()
 
     $('#lastRefreshedAt').text(
       `Dernière mise à jour à ${moment().format('HH:mm:ss')}`

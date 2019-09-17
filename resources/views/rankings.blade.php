@@ -15,7 +15,7 @@
 
 @section('content')
   <!-- carousel-fade -->
-  <div id="rankingCarousel" class="carousel slide" data-ride="carousel" data-interval="20000">
+  <div id="rankingCarousel" class="carousel slide" data-ride="carousel" data-interval="60000">
     <div class="carousel-inner">
       <div class="carousel-item active">
         <canvas id="allRankings" class="d-block w-100"></canvas>
@@ -44,7 +44,7 @@
       <div class="carousel-item">
         <canvas id="globalRanks"  class="d-block w-100"></canvas>
       </div>
-
+      <!--
       <div class="carousel-item">
         <table class="table table-striped table-bordered" style="width: 100%" id="clanRankings">
           <thead>
@@ -55,7 +55,17 @@
           </thead>
         </table>
       </div>
+      -->
     </div>
+
+    <a class="carousel-control-prev" href="#rankingCarousel" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#rankingCarousel" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
   </div>
   <!--<div class="progress" style="height: 4px;">
     <div class="progress-bar bg-info" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" id="progressBar"></div>

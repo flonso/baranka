@@ -473,8 +473,10 @@ function bindManualPointsModal(containerId) {
     if (typeof points === undefined || points.trim() == '') {
       return toast('Erreur de formulaire', "Merci d'indiquer le nombre de points gagnés/perdus", 'alert')
     }
+    console.log(points)
+
     const params = {
-      "scoreIncrement": points
+      "scoreIncrement": parseInt(points, 10)
     }
 
     console.log(

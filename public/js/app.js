@@ -95413,8 +95413,9 @@ function bindManualPointsModal(containerId) {
       return toast('Erreur de formulaire', "Merci d'indiquer le nombre de points gagnés/perdus", 'alert');
     }
 
+    console.log(points);
     var params = {
-      "scoreIncrement": points
+      "scoreIncrement": parseInt(points, 10)
     };
     console.log("Calling route ".concat(url, " with parameters"), params);
     axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch(url, params).then(function (r) {
@@ -95746,32 +95747,15 @@ function bindRankTable() {
   return table;
 }
 
-function bindClanRankTable() {
-  var table = $('#clanRankings').DataTable({
-    ajax: '/api/game/clans',
-    paging: false,
-    searchable: false,
-    deferRender: true,
-    columns: [{
-      data: "name"
-    }, {
-      data: "points"
-    }]
-  });
-  return table;
-}
-
 function initCharts() {
   var allRanksChart = initAllRanksChart();
   var globalRanksChart = initGlobalRankChart();
   var table = bindRankTable();
-  var clanTable = bindClanRankTable();
 
   var refresh = function refresh() {
     refreshGlobalRankChart(globalRanksChart);
     refreshAllRanksChart(allRanksChart);
     table.ajax.reload();
-    clanTable.ajax.reload();
     $('#lastRefreshedAt').text("Derni\xE8re mise \xE0 jour \xE0 ".concat(moment().format('HH:mm:ss')));
   };
 
