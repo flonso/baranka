@@ -18,7 +18,7 @@
         "cross-env": "^5.1",
         "datatables.net": "^1.10.20",
         "datatables.net-bs4": "^1.10.20",
-        "jquery": "^3.2",
+        "jquery": "^3.5",
         "laravel-mix": "^4.1.4",
         "lodash": "^4.17.13",
         "moment": "^2.24.0",
